@@ -12,3 +12,8 @@ Een CISO bij een gemeente heeft dagelijks vragen die niet met een Google-zoekopd
 ## Status
 
 Concept-fase. Bijdragen welkom — zowel technisch als inhoudelijk.
+---
+
+## Principes
+
+Dit project volgt de [architectuur- en communityprincipes](https://github.com/security-commons-nl/.github/blob/main/PRINCIPLES.md) van security-commons-nl: EU-soevereiniteit, AI altijd adviserend, auditbaarheid by design, least privilege en open source als standaard.
