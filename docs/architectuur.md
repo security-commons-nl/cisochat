@@ -63,21 +63,7 @@ Bij elke vraag haalt de agent relevante passages op uit de kennisbank en voegt d
 
 Eenvoudige UI: gebruiker stelt vraag, krijgt antwoord met bronverwijzing naar de relevante norm.
 
-**Standalone:** losse webapplicatie (Next.js of vergelijkbaar)  
-**Ingebouwd (fase 2):** als module in grc-platform — met toegang tot organisatiecontext (risicoprofiel, open controls)
-
----
-
-## Integratie met grc-platform (fase 2)
-
-Op termijn kan cisochat context ophalen uit het GRC-platform van de eigen organisatie:
-
-```
-"Gezien jullie huidige open controls op BIO-maatregel 9.4.2 en het risiconiveau 'hoog' 
-voor het DigiD-koppelvlak, zou ik het volgende overwegen..."
-```
-
-Dit vereist een authenticatiemechanisme en leesrechten op het GRC-platform van de tenant. Fase 1 draait volledig zonder die integratie.
+**Standalone:** losse webapplicatie (Next.js of vergelijkbaar)
 
 ---
 
@@ -90,4 +76,4 @@ Fine-tuning is duur, veroudert snel en maakt het model ondoorzichtig. RAG laat z
 EU-soevereiniteit is een kernprincipe van security-commons-nl. Mistral is Frans, de API draait in de EU, en het model presteert goed op meertalige taken. Volledig lokaal via Ollama is ook ondersteund voor organisaties zonder externe API-verbinding.
 
 **Waarom dezelfde stack als grc-platform?**  
-Overlap in technologie (pgvector, FastAPI, Next.js) maakt het makkelijker om de twee projecten later te integreren en voor dezelfde community bij te dragen aan beide.
+Overlap in technologie (pgvector, FastAPI, Next.js) maakt het makkelijker voor dezelfde community om aan beide projecten bij te dragen.
