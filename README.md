@@ -32,6 +32,7 @@ Commons-tooling draait. Kort: *waar de andere projecten elk één taak uitvoeren
 ## Meer lezen
 
 - [vCISO-blueprint](docs/vciso/vciso-blueprint.md) — **vastgesteld**: OSS-landschap per CSF-functie, capability-map, gap-analyse, orkestratie-ontwerp en roadmap
+- [Architectuurplaat (interactief)](docs/vciso/architectuur.html) — visuele weergave: hoe een vraag stroomt · gelaagde architectuur · CSF-capability-map
 - [Ontwerp & blueprint-opzet](docs/vciso-blueprint-ontwerp.md) — de architectuurkeuze (dirigent boven tools/skills/OSS)
 - [Onderzoek per CSF-functie](docs/vciso/research/) — de onderbouwde sweeps met bron-URL's
 - [Oorspronkelijk concept](docs/concept.md) — de eerste (smallere) RAG-chatbot-opzet

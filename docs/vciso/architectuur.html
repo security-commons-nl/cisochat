@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>vCISO-dirigent — architectuur (cisochat)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0a0d12; --ink-2:#0e1219; --panel:#141a24; --panel-2:#1a2230;
+    --line:#27303f; --line-2:#323d4f;
+    --text:#e7edf5; --muted:#94a1b4; --faint:#6b7789;
+    --oss:#2dd4bf;      /* externe open-source tool */
+    --skill:#7aa2f7;    /* generieke skill / kennislaag */
+    --brein:#e8b94a;    /* reasoning + RAG — geen tool */
+    --bouwen:#7c8aa0;   /* nog te bouwen (gap) */
+    --gate:#ff6f5e;     /* deterministische gate — mens beslist */
+    --accent:var(--oss);
+    --display:'Bricolage Grotesque', sans-serif;
+    --body:'IBM Plex Sans', sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+    --r:14px; --r-sm:9px;
+    --shadow:0 18px 50px -20px rgba(0,0,0,.75);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:var(--body); background:var(--ink); color:var(--text);
+    line-height:1.55; -webkit-font-smoothing:antialiased; overflow-x:hidden;
+    background-image:
+      radial-gradient(1100px 600px at 82% -8%, rgba(45,212,191,.07), transparent 60%),
+      radial-gradient(900px 520px at 10% 6%, rgba(122,162,247,.06), transparent 55%),
+      linear-gradient(var(--ink), var(--ink-2));
+    background-attachment:fixed;
+  }
+  /* faint grid texture */
+  body::before{
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.4;
+    background-image:
+      linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+    background-size:46px 46px;
+    mask-image:radial-gradient(circle at 50% 30%, #000 30%, transparent 85%);
+  }
+  .wrap{position:relative; z-index:1; max-width:1120px; margin:0 auto; padding:clamp(22px,4vw,52px) clamp(16px,4vw,40px) 80px}
+
+  /* ---------- header ---------- */
+  header{margin-bottom:30px}
+  .kicker{font-family:var(--mono); font-size:12px; letter-spacing:.32em; text-transform:uppercase; color:var(--accent); display:flex; align-items:center; gap:10px}
+  .kicker::before{content:""; width:26px; height:1px; background:var(--accent); display:inline-block}
+  h1{font-family:var(--display); font-weight:800; font-size:clamp(2.1rem,6vw,3.6rem); line-height:1.02; letter-spacing:-.02em; margin:14px 0 8px}
+  h1 .em{color:var(--accent)}
+  .lede{color:var(--muted); max-width:64ch; font-size:clamp(1rem,2.2vw,1.12rem)}
+  .meta{display:flex; flex-wrap:wrap; gap:10px; margin-top:18px}
+  .chip{font-family:var(--mono); font-size:11.5px; letter-spacing:.04em; padding:5px 11px; border:1px solid var(--line-2); border-radius:100px; color:var(--muted); background:rgba(255,255,255,.015)}
+  .chip.warn{border-color:rgba(255,111,94,.5); color:#ffb3a8}
+  .chip.warn b{color:var(--gate)}
+
+  /* ---------- tabs ---------- */
+  .tabs{display:flex; gap:6px; margin:34px 0 22px; border-bottom:1px solid var(--line); flex-wrap:wrap}
+  .tab{appearance:none; background:none; border:0; color:var(--muted); font-family:var(--mono); font-size:13px; letter-spacing:.02em; padding:13px 16px; cursor:pointer; position:relative; border-radius:8px 8px 0 0; transition:color .2s}
+  .tab .n{color:var(--faint); margin-right:8px}
+  .tab:hover{color:var(--text)}
+  .tab[aria-selected="true"]{color:var(--text)}
+  .tab[aria-selected="true"]::after{content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--accent); border-radius:2px; box-shadow:0 0 12px var(--accent)}
+  .tab:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+  .panel{display:none; animation:rise .5s cubic-bezier(.2,.7,.2,1) both}
+  .panel.active{display:block}
+  @keyframes rise{from{opacity:0; transform:translateY(14px)}to{opacity:1; transform:none}}
+  .panel h2{font-family:var(--display); font-weight:700; font-size:1.5rem; letter-spacing:-.01em; margin-bottom:4px}
+  .panel .sub{color:var(--muted); font-size:.95rem; margin-bottom:26px; max-width:70ch}
+
+  .stagger>*{opacity:0; animation:rise .55s cubic-bezier(.2,.7,.2,1) forwards}
+  .stagger>*:nth-child(1){animation-delay:.04s}
+  .stagger>*:nth-child(2){animation-delay:.10s}
+  .stagger>*:nth-child(3){animation-delay:.16s}
+  .stagger>*:nth-child(4){animation-delay:.22s}
+  .stagger>*:nth-child(5){animation-delay:.28s}
+  .stagger>*:nth-child(6){animation-delay:.34s}
+  .stagger>*:nth-child(7){animation-delay:.40s}
+
+  /* ---------- FLOW view ---------- */
+  .flow{display:flex; flex-direction:column; gap:0}
+  .node{position:relative; background:linear-gradient(180deg,var(--panel),var(--panel-2)); border:1px solid var(--line); border-radius:var(--r); padding:18px 20px; box-shadow:var(--shadow); transition:transform .2s, border-color .2s}
+  .node:hover{transform:translateY(-2px); border-color:var(--line-2)}
+  .node .step{font-family:var(--mono); font-size:11px; color:var(--accent); letter-spacing:.18em; text-transform:uppercase}
+  .node h3{font-family:var(--display); font-weight:700; font-size:1.16rem; margin:5px 0 4px}
+  .node p{color:var(--muted); font-size:.92rem; max-width:74ch}
+  .connector{width:2px; height:30px; margin:0 auto; background:linear-gradient(var(--line-2),var(--accent)); opacity:.6; position:relative}
+  .connector::after{content:"▾"; position:absolute; bottom:-4px; left:50%; transform:translateX(-50%); color:var(--accent); font-size:13px}
+  .node.actor{border-style:dashed; background:rgba(255,255,255,.02)}
+  .node.gate{border-color:rgba(255,111,94,.55); background:linear-gradient(180deg,rgba(255,111,94,.10),var(--panel-2))}
+  .node.gate .step{color:var(--gate)}
+  .node.gate h3 .lock{color:var(--gate)}
+  .branch{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:6px 0}
+  .branch .node{padding:15px 16px}
+  .branch .node h3{font-size:1rem}
+  .branch .tag{font-family:var(--mono); font-size:11px; padding:2px 8px; border-radius:6px; display:inline-block; margin-bottom:7px}
+  .t-brein{background:rgba(232,185,74,.14); color:var(--brein); border:1px solid rgba(232,185,74,.4)}
+  .t-oss{background:rgba(45,212,191,.13); color:var(--oss); border:1px solid rgba(45,212,191,.4)}
+  .t-bouwen{background:rgba(124,138,160,.14); color:#aeb9c9; border:1px dashed rgba(124,138,160,.55)}
+  .t-skill{background:rgba(122,162,247,.14); color:var(--skill); border:1px solid rgba(122,162,247,.4)}
+
+  /* ---------- LAYERS view ---------- */
+  .layers{display:grid; grid-template-columns:1fr 230px; gap:16px; align-items:start}
+  .stack{display:flex; flex-direction:column; gap:10px}
+  .layer{background:linear-gradient(180deg,var(--panel),var(--panel-2)); border:1px solid var(--line); border-left:3px solid var(--accent); border-radius:var(--r-sm); padding:16px 18px; transition:transform .2s,border-color .2s}
+  .layer:hover{transform:translateX(4px)}
+  .layer h3{font-family:var(--display); font-weight:700; font-size:1.08rem; display:flex; align-items:center; gap:10px}
+  .layer h3 .ix{font-family:var(--mono); font-size:.78rem; color:var(--faint); font-weight:500}
+  .layer p{color:var(--muted); font-size:.9rem; margin-top:3px}
+  .layer.brain{border-left-color:var(--brein)}
+  .layer.ground{border-left-color:var(--skill)}
+  .layer.gatel{border-left-color:var(--gate)}
+  .layer.tools{border-left-color:var(--oss)}
+  .rail{position:sticky; top:18px; background:linear-gradient(180deg,var(--panel),var(--panel-2)); border:1px solid var(--line); border-radius:var(--r); padding:18px}
+  .rail h4{font-family:var(--mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--faint); margin-bottom:12px}
+  .rail ul{list-style:none; display:flex; flex-direction:column; gap:11px}
+  .rail li{font-size:.88rem; color:var(--text); display:flex; gap:9px; align-items:flex-start}
+  .rail li span{color:var(--accent); font-family:var(--mono)}
+  .rail li small{display:block; color:var(--faint); font-size:.78rem}
+
+  /* ---------- CSF map view ---------- */
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:14px}
+  .csf{background:linear-gradient(180deg,var(--panel),var(--panel-2)); border:1px solid var(--line); border-radius:var(--r); padding:18px; box-shadow:var(--shadow); transition:transform .2s,border-color .2s}
+  .csf:hover{transform:translateY(-3px); border-color:var(--line-2)}
+  .csf .fh{display:flex; align-items:baseline; justify-content:space-between; gap:8px; margin-bottom:13px; padding-bottom:11px; border-bottom:1px dashed var(--line-2)}
+  .csf .fh h3{font-family:var(--display); font-weight:800; font-size:1.18rem; letter-spacing:-.01em}
+  .csf .fh .fn{font-family:var(--mono); font-size:11px; color:var(--faint); letter-spacing:.1em}
+  .cap{display:flex; flex-direction:column; gap:9px}
+  .cap .row{display:flex; gap:8px; align-items:flex-start; font-size:.86rem}
+  .cap .row .nm{flex:1; color:var(--text)}
+  .cap .row .nm em{color:var(--muted); font-style:normal; font-family:var(--mono); font-size:.78rem; display:block}
+  .pill{font-family:var(--mono); font-size:9.5px; font-weight:600; padding:2px 6px; border-radius:5px; white-space:nowrap; letter-spacing:.03em; line-height:1.5; height:fit-content}
+  .p-oss{background:rgba(45,212,191,.13); color:var(--oss)}
+  .p-skill{background:rgba(122,162,247,.14); color:var(--skill)}
+  .p-brein{background:rgba(232,185,74,.15); color:var(--brein)}
+  .p-bouwen{background:rgba(124,138,160,.16); color:#b3bdcb; border:1px dashed rgba(124,138,160,.5)}
+
+  /* legend */
+  .legend{display:flex; flex-wrap:wrap; gap:14px; margin:0 0 24px; padding:14px 16px; border:1px solid var(--line); border-radius:var(--r-sm); background:rgba(255,255,255,.015)}
+  .legend .li{display:flex; align-items:center; gap:8px; font-size:.82rem; color:var(--muted)}
+  .legend .sw{width:13px; height:13px; border-radius:4px}
+  .legend small{color:var(--faint)}
+
+  footer{margin-top:46px; padding-top:22px; border-top:1px solid var(--line); display:flex; flex-wrap:wrap; gap:14px; justify-content:space-between; align-items:center; color:var(--faint); font-size:.82rem}
+  footer .mono{font-family:var(--mono)}
+  footer b{color:var(--muted); font-weight:600}
+
+  @media (max-width:760px){
+    .branch{grid-template-columns:1fr}
+    .layers{grid-template-columns:1fr}
+    .rail{position:static}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important; transition:none!important; scroll-behavior:auto!important}
+    .stagger>*{opacity:1}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">Security Commons NL · cisochat</div>
+    <h1>De vCISO-<span class="em">dirigent</span></h1>
+    <p class="lede">Hoe één AI-brein de volle breedte van het CISO-werk nabootst: redeneren langs NIST&nbsp;CSF&nbsp;2.0, gegrond in de normen, en open-source tooling aansturen — adviserend, de mens beslist.</p>
+    <div class="meta">
+      <span class="chip">NIST CSF 2.0</span>
+      <span class="chip">open source · EU-soeverein</span>
+      <span class="chip">dirigent, geen doos</span>
+      <span class="chip warn"><b>status:</b>&nbsp;blueprint vastgesteld — nog niet gebouwd</span>
+    </div>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="Architectuur-views">
+    <button class="tab" role="tab" aria-selected="true"  aria-controls="v-flow"   id="t-flow"   onclick="showView('flow',this)"><span class="n">01</span>Hoe een vraag stroomt</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="v-layers" id="t-layers" onclick="showView('layers',this)"><span class="n">02</span>Gelaagde architectuur</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="v-csf"    id="t-csf"    onclick="showView('csf',this)"><span class="n">03</span>CSF capability-map</button>
+  </div>
+
+  <!-- ============ VIEW 1 — FLOW ============ -->
+  <section class="panel active" id="v-flow" role="tabpanel" aria-labelledby="t-flow">
+    <h2>Hoe een vraag door de dirigent stroomt</h2>
+    <p class="sub">Van vraag tot onderbouwd advies. De dirigent classificeert, kiest een instrument, en passeert vóór elke onomkeerbare stap een <strong style="color:var(--gate)">harde, code-niveau gate</strong> — niet het model dat "nee" zegt.</p>
+
+    <div class="flow stagger">
+      <div class="node actor"><div class="step">Input</div><h3>Gebruiker stelt een vraag</h3><p>"Moeten we een DPIA doen?" · "Hoe weeg ik deze BIO-maatregel?" · "Zijn we compliant?" — vragen die geen Google-zoekopdracht beantwoordt.</p></div>
+      <div class="connector"></div>
+      <div class="node"><div class="step">Stap 1 · routing</div><h3>CSF-functie-detectie</h3><p>LLM-classificatie: valt dit onder Govern · Identify · Protect · Detect · Respond · Recover — of is het puur advies?</p></div>
+      <div class="connector"></div>
+      <div class="node"><div class="step">Stap 2 · routing</div><h3>Capability-routing</h3><p>Welke vCISO-capability is aan de orde, en welk invullingstype hoort erbij?</p></div>
+      <div class="connector"></div>
+      <div class="node" style="background:none;border:none;box-shadow:none;padding:0">
+        <div class="step" style="padding-left:2px">Stap 3 · instrumentkeuze</div>
+        <div class="branch" style="margin-top:8px">
+          <div class="node"><span class="tag t-brein">[Brein]</span><h3>Redeneren + RAG</h3><p>Geen tool — de dirigent zelf, gegrond in de kennisbank (normen).</p></div>
+          <div class="node"><span class="tag t-oss">[OSS]</span><h3>Instrument aanroepen</h3><p>Extern open-source tool via MCP of REST/CLI-adapter.</p></div>
+          <div class="node"><span class="tag t-bouwen">[Bouwen]</span><h3>Eerlijk melden</h3><p>Geen volwassen OSS — benoem de gap i.p.v. verzinnen.</p></div>
+        </div>
+      </div>
+      <div class="connector"></div>
+      <div class="node gate"><div class="step">Stap 4 · Noorderster</div><h3><span class="lock">⬢</span> Deterministische routing-gate</h3><p>Vóór elke schrijf- of onomkeerbare actie: een harde check op code-niveau. AI bereidt voor, <strong>de mens beslist</strong>. (LLM-guardrails falen onder aanvallen — daarom geen "vraag het netjes aan het model".)</p></div>
+      <div class="connector"></div>
+      <div class="node"><div class="step">Stap 5 · output</div><h3>Onderbouwd advies &nbsp;+&nbsp; auditspoor</h3><p>Antwoord mét bronverwijzing en afweging. Elke prompt, tool-aanroep, bron en beslissing landt in een herleidbaar, append-only spoor → terug naar de gebruiker.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ VIEW 2 — LAYERS ============ -->
+  <section class="panel" id="v-layers" role="tabpanel" aria-labelledby="t-layers">
+    <h2>Gelaagde architectuur</h2>
+    <p class="sub">Van interface tot instrumenten. Het brein redeneert bovenop een grounding-laag; een router kiest het instrument; een deterministische gate bewaakt de Noorderster; de instrumenten zijn bestaande open-source tools.</p>
+
+    <div class="layers">
+      <div class="stack stagger">
+        <div class="layer"><h3><span class="ix">UI</span> Interface</h3><p>Chat als ingang; op termijn ingebed in of gekoppeld aan een GRC-frontend.</p></div>
+        <div class="layer brain"><h3><span class="ix">01</span> Dirigent-brein</h3><p>CISO-persona · NIST CSF-redeneerframe · advies met onderbouwing, transparant over onzekerheid — beslist nooit.</p></div>
+        <div class="layer"><h3><span class="ix">02</span> Capability-router</h3><p>CSF-detectie → capability → instrumentkeuze ([Brein] / [OSS] / [Bouwen]). Progressive disclosure van de skill-laag.</p></div>
+        <div class="layer ground"><h3><span class="ix">03</span> Grounding · RAG</h3><p>Kennisbank met de normen: BIO&nbsp;2.0 · ISO&nbsp;27001/27701/22301 · AVG · EU&nbsp;AI&nbsp;Act. Antwoorden steunen op opgehaalde bronnen, niet op trainingsdata.</p></div>
+        <div class="layer gatel"><h3><span class="ix">04</span> Deterministische gate + auditspoor</h3><p>Harde code-niveau check vóór onomkeerbare acties (Noorderster) · tamper-evident, append-only beslislog.</p></div>
+        <div class="layer tools"><h3><span class="ix">05</span> Instrumenten</h3><p>Externe open-source tooling per CSF-functie, aangestuurd via MCP of REST/CLI — plus [Brein] waar geen volwassen tool bestaat.</p></div>
+      </div>
+      <aside class="rail">
+        <h4>Ontwerpprincipes</h4>
+        <ul>
+          <li><span>◇</span><div>EU-soevereiniteit<small>zelf-hostbaar; geen data buiten de EU</small></div></li>
+          <li><span>◇</span><div>Model-agnostisch<small>lokaal via Ollama / Mistral EU</small></div></li>
+          <li><span>◇</span><div>Open source als standaard<small>publiek geld, publieke code</small></div></li>
+          <li><span>◇</span><div>Auditbaar by design<small>elke stap herleidbaar</small></div></li>
+          <li><span>◇</span><div>Mens beslist<small>~decision-support, geen autonome uitvoerder</small></div></li>
+        </ul>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============ VIEW 3 — CSF MAP ============ -->
+  <section class="panel" id="v-csf" role="tabpanel" aria-labelledby="t-csf">
+    <h2>CSF capability-map</h2>
+    <p class="sub">Per NIST CSF 2.0-functie: de vCISO-capabilities en hoe ze worden ingevuld. Let op de balans — de techniek is rijk in open source; het <strong style="color:var(--brein)">advies-brein</strong> en de <strong style="color:#b3bdcb">te bouwen</strong> governance-/proceskant zijn waar cisochat de meeste waarde toevoegt.</p>
+
+    <div class="legend">
+      <div class="li"><span class="sw" style="background:var(--oss)"></span>[OSS] extern open-source tool</div>
+      <div class="li"><span class="sw" style="background:var(--skill)"></span>[Skill] generieke skill / kennislaag</div>
+      <div class="li"><span class="sw" style="background:var(--brein)"></span>[Brein] reasoning + RAG — géén tool</div>
+      <div class="li"><span class="sw" style="background:var(--bouwen)"></span>[Bouwen] nog te bouwen <small>(gap)</small></div>
+    </div>
+
+    <div class="grid stagger">
+      <!-- GOVERN -->
+      <div class="csf">
+        <div class="fh"><h3>Govern</h3><span class="fn">GV · sturen</span></div>
+        <div class="cap">
+          <div class="row"><span class="pill p-brein">Brein</span><div class="nm">Securitystrategie<em>advies-werk, RAG</em></div></div>
+          <div class="row"><span class="pill p-oss">OSS</span><div class="nm">Beleid / policy-lifecycle<em>CISO Assistant + Brein</em></div></div>
+          <div class="row"><span class="pill p-oss">OSS</span><div class="nm">Policy-as-code<em>OPA · Kyverno · Cedar</em></div></div>
+          <div class="row"><span class="pill p-bouwen">Bouwen</span><div class="nm">Governance &amp; rollen (RASCI)<em>OSS-gap</em></div></div>
+          <div class="row"><span class="pill p-oss">OSS</span><div class="nm">Bestuurlijke KPI-rapportage<em>Grafana-feed + Brein</em></div></div>
+        </div>
+      </div>
+      <!-- IDENTIFY -->
+      <div class="csf">
+        <div class="fh"><h3>Identify</h3><span class="fn">ID · kennen</span></div>
+        <div class="cap">
+          <div class="row"><span class="pill p-oss">OSS</span><div class="nm">Asset-/data-inventory<em>NetBox · Ralph</em></div></div>
+          <div class="row"><span class="pill p-oss">OSS</span><div class="nm">Risk register &amp; -beoordeling<em>MONARC · CISO Assistant + Brein</em></div></div>
+          <div class="row"><span class="pill p-oss">OSS</span><div class="nm">Threat modeling<em>Threat Dragon · Threagile + Brein</em></div></div>
+          <div class="row"><span class="pill p-oss">OSS</span><div class="nm">Compliance-mapping &amp; gap<em>CISO Assistant · NIST CSF MCP + Skill</em></div></div>
+          <div class="row"><span class="pill p-oss">OSS</span><div class="nm">Threat intelligence<em>MISP · OpenCTI</em></div></div>
+        </div>
+      </div>
+      <!-- PROTECT -->
+      <div class="csf">
+        <div class="fh"><h3>Protect</h3><span class="fn">PR · beschermen</span></div>
+        <div class="cap">
+          <div class="row"><span class="pill p-oss">OSS</span><div class="nm">Control-/maatregelenbeheer<em>CISO Assistant</em></div></div>
+          <div class="row"><span class="pill p-brein">Brein</span><div class="nm">Maatregel-advies &amp; afweging<em>maatregel vs. restrisico</em></div></div>
+          <div class="row"><span class="pill p-oss">OSS</span><div class="nm">Awareness &amp; phishing-sim<em>Gophish + Bouwen (content)</em></div></div>
+          <div class="row"><span class="pill p-oss">OSS</span><div class="nm">IAM / access-governance<em>Keycloak · authentik</em></div></div>
+          <div class="row"><span class="pill p-oss">OSS</span><div class="nm">Hardening / baselines<em>OpenSCAP · Lynis · dev-sec</em></div></div>
+        </div>
+      </div>
+      <!-- DETECT -->
+      <div class="csf">
+        <div class="fh"><h3>Detect</h3><span class="fn">DE · zien</span></div>
+        <div class="cap">
+          <div class="row"><span class="pill p-oss">OSS</span><div class="nm">Security posture / CSPM<em>Prowler (MCP)</em></div></div>
+          <div class="row"><span class="pill p-oss">OSS</span><div class="nm">Vulnerability management<em>OpenVAS · Trivy · Dependency-Track</em></div></div>
+          <div class="row"><span class="pill p-oss">OSS</span><div class="nm">SIEM / monitoring<em>Wazuh · OpenSearch SA</em></div></div>
+          <div class="row"><span class="pill p-oss">OSS</span><div class="nm">Detection-as-code<em>Sigma · YARA-X</em></div></div>
+          <div class="row"><span class="pill p-brein">Brein</span><div class="nm">Detectie-prioritering / duiding<em>false-positive-weging</em></div></div>
+        </div>
+      </div>
+      <!-- RESPOND -->
+      <div class="csf">
+        <div class="fh"><h3>Respond</h3><span class="fn">RS · reageren</span></div>
+        <div class="cap">
+          <div class="row"><span class="pill p-oss">OSS</span><div class="nm">Incident response / case mgmt<em>DFIR-IRIS</em></div></div>
+          <div class="row"><span class="pill p-oss">OSS</span><div class="nm">SOAR / playbook-automatisering<em>Shuffle · Tracecat</em></div></div>
+          <div class="row"><span class="pill p-brein">Brein</span><div class="nm">IR-coördinatie &amp; besluitvorming<em>mens-in-de-loop</em></div></div>
+          <div class="row"><span class="pill p-oss">OSS</span><div class="nm">Playbook-standaarden<em>CACAO v2 + SOARCA</em></div></div>
+          <div class="row"><span class="pill p-bouwen">Bouwen</span><div class="nm">Crisiscommunicatie<em>EU-soevereine OSS-gap + Brein</em></div></div>
+        </div>
+      </div>
+      <!-- RECOVER -->
+      <div class="csf">
+        <div class="fh"><h3>Recover</h3><span class="fn">RC · herstellen</span></div>
+        <div class="cap">
+          <div class="row"><span class="pill p-oss">OSS</span><div class="nm">Backup &amp; herstel-orchestratie<em>restic · BorgBackup · Velero</em></div></div>
+          <div class="row"><span class="pill p-oss">OSS</span><div class="nm">DR-testing / veerkracht<em>LitmusChaos · Chaos Toolkit</em></div></div>
+          <div class="row"><span class="pill p-bouwen">Bouwen</span><div class="nm">BCM / ISO 22301-lifecycle<em>ernstige OSS-gap</em></div></div>
+          <div class="row"><span class="pill p-bouwen">Bouwen</span><div class="nm">BIA · DR-planning<em>ernstige OSS-gap</em></div></div>
+          <div class="row"><span class="pill p-oss">OSS</span><div class="nm">Post-incident review<em>OneUptime + Brein + Bouwen</em></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span class="mono">cisochat · vCISO-blueprint → <b>docs/vciso/vciso-blueprint.md</b></span>
+    <span><b>Security Commons NL</b> · open source · AI adviseert, de mens beslist</span>
+  </footer>
+
+</div>
+
+<script>
+  function showView(id, btn){
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected','false'));
+    document.getElementById('v-'+id).classList.add('active');
+    btn.setAttribute('aria-selected','true');
+  }
+  // keyboard arrow navigation across tabs
+  const tabs=[...document.querySelectorAll('.tab')];
+  tabs.forEach((t,i)=>t.addEventListener('keydown',e=>{
+    if(e.key!=='ArrowRight'&&e.key!=='ArrowLeft')return;
+    e.preventDefault();
+    const n=(i+(e.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;
+    tabs[n].focus(); tabs[n].click();
+  }));
+</script>
+</body>
+</html>

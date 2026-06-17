@@ -220,6 +220,9 @@ in nóg een tool, maar in het advies-brein + de orkestratie dáár waar OSS-tool
 Hoe de dirigent (`cisochat`) een vraag afhandelt, onderbouwd met de integreerbaarheid-/AI-native-bevindingen
 en de "Lessen voor de dirigent-architectuur" uit `ai-vciso-meta.md`.
 
+> 📊 **Visuele weergave:** zie [`architectuur.html`](architectuur.html) — interactieve plaat met drie views
+> (hoe een vraag stroomt · gelaagde architectuur · CSF-capability-map).
+
 ### Routeringsflow
 1. **CSF-functie-detectie** (LLM-classificatie): valt de vraag onder Govern/Identify/.../Recover, of is het
    puur advies?
