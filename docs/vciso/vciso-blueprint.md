@@ -4,10 +4,15 @@
 > een cross-cutting AI-vCISO-sweep) tot één generieke blueprint voor de vCISO-dirigent in `cisochat`.
 > Generiek en framework-agnostisch; specialisatie naar een concrete organisatie komt later en apart.
 >
-> **Status:** concept — wacht op mens-in-de-loop review (Taak 9). **Peildatum onderzoek:** juni 2026.
+> **Status:** **vastgesteld** (2026-06-17, na mens-in-de-loop review + steekproef-verificatie van de
+> zwaarst-wegende bronnen — zie noot onderaan). **Peildatum onderzoek:** juni 2026.
 > **Bronnen:** de zeven `research/*.md`-bestanden in deze map; alle tool-claims daar zijn voorzien van
 > bron-URL's. **Harde poort:** alleen OSI-open source; source-available (BSL/SSPL/ELv2/CC-NC/custom) en
 > proprietary "community"-edities zijn uitgesloten en als zodanig geflagd.
+>
+> **Reikwijdte-keuze.** cisochat is in deze blueprint een **standalone-orkestrator** van externe OSS + een
+> eigen advies-brein (RAG op de normatieve `kennisbank`). We bouwen géén harde afhankelijkheid op andere
+> Security-Commons-projecten; hoe cisochat zich conceptueel tot die projecten verhoudt staat in §6.
 
 ---
 
@@ -82,7 +87,7 @@ bijbehorende `research/<functie>.md`. Legenda fit-score: 5 = rijp/permissief/EU-
 | Project | Fit | Licentie | Waarvoor (herbruikbaar als) |
 |---|---|---|---|
 | CISO Assistant | 5 | AGPL-3.0 | GRC-ruggengraat (backend via REST/MCP) |
-| Anthropic Cybersecurity Skills | 5 | Apache-2.0 | framework-agnostische **kennislaag** (754 skills, progressive disclosure) |
+| Anthropic Cybersecurity Skills ⚠️ | 5 | Apache-2.0 | kennislaag-**patroon** (754 skills, progressive disclosure) — ⚠️ **community-repo (@mukul975), niet Anthropic-officieel**; gebruik het patroon, niet de naam |
 | Microsoft Agent Governance Toolkit | 4 | MIT | **deterministisch policy-enforcement** voor de noorderster/routing-gate; Merkle-audit |
 | AiSOC | 4 | MIT | multi-agent SOC-architectuur; **Investigation Ledger** (audit-by-design); gelaagd geheugen |
 | Prowler Lighthouse | 4 | Apache-2.0 | patroon **MCP-als-domeininterface** |
@@ -94,10 +99,9 @@ bijbehorende `research/<functie>.md`. Legenda fit-score: 5 = rijp/permissief/EU-
 
 ## §2 — Capability-map
 
-Per CSF-functie: de vCISO-capability → hoe die wordt ingevuld. Kolom **invulling** kent vijf types:
-**[OSS]** externe open-source tool · **[Commons]** bestaand Security-Commons-project · **[Skill]** generieke
-AI-skill/kennislaag · **[Brein]** = *reasoning + RAG, géén tool* (het advies-brein van de dirigent) ·
-**[Bouwen]** nog te bouwen (gap → roadmap).
+Per CSF-functie: de vCISO-capability → hoe die wordt ingevuld. Kolom **invulling** kent vier types:
+**[OSS]** externe open-source tool · **[Skill]** generieke AI-skill/kennislaag · **[Brein]** = *reasoning + RAG,
+géén tool* (het advies-brein van de dirigent) · **[Bouwen]** nog te bouwen (gap → roadmap).
 
 > **Cruciaal — het advies-brein.** De **[Brein]**-capabilities zijn het hart van de vCISO: oordeel, afweging,
 > vertaling naar bestuur. Daar is geen tool voor en hoort er ook geen te zijn — dit is de dirigent zelf,
@@ -111,8 +115,8 @@ AI-skill/kennislaag · **[Brein]** = *reasoning + RAG, géén tool* (het advies-
 | Beleid/policy-lifecycle (geschreven) | **[OSS]** CISO Assistant (beleidsmodule) + **[Brein]** redactie/afweging — *jonge module, gap in acknowledgement-tracking* |
 | Policy-as-code | **[OSS]** OPA · Kyverno · Cedar |
 | Governance & rollen (RASCI) | **[Bouwen]** — bevestigde OSS-gap; nu **[Brein]** + wiki/GRC-eigenaarschap |
-| Bestuurlijke rapportage / KPI | **[Commons]** grc-platform + **[OSS]** Grafana-feed + **[Brein]** duiding voor bestuur — *geen kant-en-klare "board-view" OSS* |
-| ISMS/GRC-governancelaag | **[OSS]** CISO Assistant (ruggengraat) / **[Commons]** grc-platform |
+| Bestuurlijke rapportage / KPI | **[OSS]** Grafana-feed (op GRC-data) + **[Brein]** duiding voor bestuur — *geen kant-en-klare "board-view" OSS* |
+| ISMS/GRC-governancelaag | **[OSS]** CISO Assistant (ruggengraat) |
 
 ### Identify
 | Capability | Invulling |
@@ -120,15 +124,15 @@ AI-skill/kennislaag · **[Brein]** = *reasoning + RAG, géén tool* (het advies-
 | Asset-/data-inventory | **[OSS]** NetBox · Ralph |
 | Risk register & -beoordeling | **[OSS]** MONARC / CISO Assistant + **[Brein]** risico-interpretatie & -prioritering |
 | Threat modeling | **[OSS]** Threat Dragon · Threagile · pytm + **[Skill]** STRIDE-GPT-patroon + **[Brein]** |
-| Compliance-mapping & gap-analyse | **[OSS]** CISO Assistant · **[Skill]** ciso-bio-map/nis2-iso · **[OSS]** NIST CSF MCP-server |
-| Threat intelligence | **[OSS]** MISP · OpenCTI · **[Commons]** dreigingsanalyse/kill-chain-analysis |
+| Compliance-mapping & gap-analyse | **[OSS]** CISO Assistant · NIST CSF MCP-server + **[Skill]** norm-mapping (BIO2/ISO/NIS2) |
+| Threat intelligence | **[OSS]** MISP · OpenCTI |
 
 ### Protect
 | Capability | Invulling |
 |---|---|
-| Control-/maatregelenbeheer | **[OSS]** CISO Assistant / **[Commons]** grc-platform |
+| Control-/maatregelenbeheer | **[OSS]** CISO Assistant |
 | Maatregel-advies & afweging | **[Brein]** (maatregel vs. restrisico) |
-| Awareness & phishing-simulatie | **[OSS]** Gophish (⚠️ stagnant) · **[Commons]** weerbaarheid-game + **[Bouwen]** OSS-awareness-content |
+| Awareness & phishing-simulatie | **[OSS]** Gophish (⚠️ stagnant) + **[Bouwen]** OSS-awareness-content |
 | IAM / access-governance | **[OSS]** Keycloak · authentik |
 | Configuratie-baselines & hardening | **[OSS]** OpenSCAP+ComplianceAsCode · Lynis · dev-sec |
 | Policy-as-code-enforcement | **[OSS]** OPA · Kyverno (zie Govern) |
@@ -136,7 +140,7 @@ AI-skill/kennislaag · **[Brein]** = *reasoning + RAG, géén tool* (het advies-
 ### Detect
 | Capability | Invulling |
 |---|---|
-| Security posture / CSPM | **[OSS]** Prowler (MCP) · **[Commons]** security-posture-tool |
+| Security posture / CSPM | **[OSS]** Prowler (MCP) |
 | Vulnerability management | **[OSS]** Greenbone/OpenVAS · Trivy · OWASP Dependency-Track |
 | SIEM / monitoring | **[OSS]** Wazuh · OpenSearch Security Analytics |
 | Detection-as-code | **[OSS]** Sigma · YARA-X |
@@ -164,10 +168,10 @@ AI-skill/kennislaag · **[Brein]** = *reasoning + RAG, géén tool* (het advies-
 ### Cross-cutting (de dirigent zelf)
 | Capability | Invulling |
 |---|---|
-| Normatieve grounding (BIO2/ISO/NIS2/AVG/EU AI Act) | **[Commons]** kennisbank + **[Brein]** RAG |
-| Kennis-/skill-laag | **[OSS]** Anthropic Cybersecurity Skills (progressive disclosure) + bestaande ATLAS-skills |
+| Normatieve grounding (BIO2/ISO/NIS2/AVG/EU AI Act) | **[Skill]** RAG op de normatieve `kennisbank` (corpus, geen tool-afhankelijkheid) + **[Brein]** |
+| Kennis-/skill-laag | **[Skill]** progressive-disclosure-patroon (vgl. Anthropic Cybersecurity Skills ⚠️ community-repo, niet Anthropic) + eigen skills |
 | Routing & policy-gate (Noorderster) | **[OSS-patroon]** Microsoft AGT (deterministisch) + **[Bouwen]** |
-| Auditspoor | **[OSS-patroon]** AiSOC Investigation Ledger / AGT Merkle-audit + **[Commons]** decisions/log |
+| Auditspoor | **[OSS-patroon]** AiSOC Investigation Ledger / AGT Merkle-audit + append-only beslislog |
 
 ### Cross-functie-reconciliatie (dedup)
 Tools die in meerdere sweeps opdoken — één canonieke entry, alle functies, afgestemde score:
@@ -219,8 +223,8 @@ en de "Lessen voor de dirigent-architectuur" uit `ai-vciso-meta.md`.
 ### Routeringsflow
 1. **CSF-functie-detectie** (LLM-classificatie): valt de vraag onder Govern/Identify/.../Recover, of is het
    puur advies?
-2. **Capability-routing**: welke capability uit §2, en welk invullingstype ([OSS]/[Commons]/[Skill]/[Brein]/[Bouwen]).
-3. **Instrumentkeuze**: bij **[Brein]** → redeneren + RAG op de `kennisbank`; bij **[OSS]/[Commons]** → het
+2. **Capability-routing**: welke capability uit §2, en welk invullingstype ([OSS]/[Skill]/[Brein]/[Bouwen]).
+3. **Instrumentkeuze**: bij **[Brein]** → redeneren + RAG op de `kennisbank`; bij **[OSS]** → het
    instrument aanroepen; bij **[Bouwen]** → eerlijk melden dat er (nog) geen volwassen invulling is.
 
 ### Router-mechanisme — beslissing
@@ -231,20 +235,21 @@ en de "Lessen voor de dirigent-architectuur" uit `ai-vciso-meta.md`.
   (CISO Assistant, Wazuh, Keycloak) een **REST/CLI-adapter**. Het patroon **MCP-als-domeininterface**
   (Prowler) is leidend: kapsel elk domein in achter een uniforme interface, herschrijf de tool niet.
 - **MCP-laag model-agnostisch** houden (Ollama/LM Studio/Mistral) voor EU-soevereiniteit.
-- **Progressive disclosure** voor de kennis-/skill-laag (Anthropic Cybersecurity Skills-patroon): kleine
-  routing-header eerst, vol protocol alleen bij match — token-efficiënt.
+- **Progressive disclosure** voor de kennis-/skill-laag (Anthropic-Cybersecurity-Skills-patroon, ⚠️ het
+  patroon — niet de community-repo zelf): kleine routing-header eerst, vol protocol alleen bij match.
 
 Dit beantwoordt het open punt uit de ontwerp-spec (§10): **geen monolithische agent en geen pure
 prompt-routing, maar een dirigent die per CSF-functie het juiste MCP/REST-instrument aanstuurt, met
 LLM-routing ervoor en een deterministische gate eronder.**
 
 ### Mens-in-de-loop & audit (de Noorderster, technisch)
-- **Deterministisch policy-enforcement, geen LLM-guardrail** (les van Microsoft AGT: LLM-guardrails falen
-  onder adaptieve aanvallen). De **routing-gate** is een harde, code-niveau check vóór elke schrijf-/
-  onomkeerbare actie — niet het model dat "nee" zegt. Dit is de technische vertaling van "AI bereidt voor,
-  de mens beslist".
+- **Deterministisch policy-enforcement, geen LLM-guardrail** (les van Microsoft AGT, geverifieerd: het
+  toolkit citeert Andriushchenko et al. (ICLR 2025) met 100% attack success op GPT-4o/Claude 3/Llama-3).
+  De **routing-gate** is een harde, code-niveau check vóór elke schrijf-/onomkeerbare actie — niet het
+  model dat "nee" zegt. Dit is de technische vertaling van "AI bereidt voor, de mens beslist".
 - **Audit-by-design**: elke prompt, tool-aanroep, bron en beslissing in een herleidbaar spoor
-  (AiSOC Investigation Ledger / AGT Merkle-audit als blauwdruk; `decisions/log` als semantisch equivalent).
+  (AiSOC Investigation Ledger / AGT Merkle-audit als blauwdruk; een append-only beslislog als semantisch
+  equivalent).
 - **Realistische autonomie**: ITBench toont ~25% autonome oplossing van CISO-scenario's. De dirigent is
   **decision-support & voorbereiding**, niet autonoom uitvoerder — focus op de ~75% voorbereidings-,
   analyse- en documentatietaken.
@@ -253,29 +258,28 @@ LLM-routing ervoor en een deterministische gate eronder.**
 
 ## §5 — Roadmap (gefaseerde bouw, sub-project 2 e.v.)
 
-Volgorde van waarde, afgeleid uit de gap-analyse en de bestaande Commons-tools. Elke fase is een eigen
-brainstorm → spec → plan-cyclus.
+Volgorde van waarde, afgeleid uit de gap-analyse. Elke fase is een eigen brainstorm → spec → plan-cyclus.
 
 **Fase A — Fundament & dirigent-skelet (hoogste prioriteit).**
 De kennis-/grounding-laag (`kennisbank` + RAG), de capability-router, en de **deterministische routing-gate +
-auditspoor** (AGT/AiSOC-patronen). Dit is de kern waar al het andere op leunt; sluit aan op het bestaande
-ATLAS-`decisions/log`.
+auditspoor** (AGT/AiSOC-patronen). Dit is de kern waar al het andere op leunt; een append-only beslislog
+vormt het semantische auditspoor.
 
-**Fase B — Govern/Identify eerst (sterkste OSS + bestaande Commons-basis).**
-Koppel CISO Assistant (of `grc-platform`) als GRC-backend via MCP/REST; integreer compliance-mapping
-(ciso-bio-map/nis2-iso), threat-intel (MISP/OpenCTI ↔ dreigingsanalyse) en threat-modeling (STRIDE-GPT-patroon).
-Bouw de **RASCI-laag** (bevestigde gap) als lichte module bovenop de GRC-API.
+**Fase B — Govern/Identify eerst (sterkste OSS-basis).**
+Koppel CISO Assistant als GRC-backend via MCP/REST; integreer compliance-mapping (norm-mapping BIO2/ISO/NIS2),
+threat-intel (MISP/OpenCTI) en threat-modeling (STRIDE-GPT-patroon). Bouw de **RASCI-laag** (bevestigde gap)
+als lichte module bovenop de GRC-API.
 
-**Fase C — Detect (rijpe OSS, deels al in Commons).**
-Prowler (MCP) + Wazuh + Dependency-Track aanhaken op `security-posture-tool`; detectie-duiding via het brein.
+**Fase C — Detect (rijpe OSS).**
+Prowler (MCP) + Wazuh + Dependency-Track als detect-instrumenten; detectie-duiding via het brein.
 
 **Fase D — Govern-rapportage & advies-brein verdiepen.**
 Bestuurlijke KPI-view (GRC-data → Grafana → brein-duiding) en beleids-lifecycle-ondersteuning.
 
 **Fase E — Respond & de gaps (Recover).**
 DFIR-IRIS + Shuffle aanhaken; daarna de zware gaps aanpakken waar OSS ontbreekt: **BCM/BIA-lichtgewicht
-module**, **crisiscommunicatie**, **postmortem-proces** — kandidaten voor eigen Commons-bouw, want hier
-vult `cisochat` een echt marktgat.
+module**, **crisiscommunicatie**, **postmortem-proces** — kandidaten voor eigen bouw, want hier vult
+`cisochat` een echt marktgat.
 
 > **Leidend principe door alle fasen:** bouw geen slechter alternatief naast bestaande rijpe OSS — koppel
 > en orkestreer. Bouw zelf alleen waar de gap-analyse een echt gat aantoont (RASCI, BCM/BIA, crisiscomms,
@@ -283,9 +287,38 @@ vult `cisochat` een echt marktgat.
 
 ---
 
-## Open punten voor de review (Taak 9)
-- Validatie van de top-kandidaten en fit-scores (steekproef op de bron-URL's in `research/*.md`).
-- Akkoord op het router-mechanisme (hybride MCP/REST + deterministische gate).
-- Akkoord op de bouwvolgorde (Fase A→E) en op welke gaps `cisochat` zelf gaat bouwen vs. orkestreren.
-- Hoe de bestaande Commons-tools (grc-platform, security-posture-tool, dreigingsanalyse, kill-chain-analysis,
-  beleid-assistent, kennisbank) precies inpassen — vraagt een eigen, korte assessment per tool.
+## §6 — Positionering binnen Security Commons NL
+
+> README-klare tekst: hoe `cisochat` zich verhoudt tot de overige Security-Commons-projecten — zónder er een
+> harde technische afhankelijkheid van te maken.
+
+Security Commons NL is een verzameling **instrumenten**: elk project doet één security-taak goed — GRC/ISMS,
+posture-meting, dreigings- en kill-chain-analyse, beleidsondersteuning, weerbaarheidstraining, een kennisbank.
+
+`cisochat` is geen extra instrument in die rij — het is de **dirigent**: het redenerende CISO-brein dat
+*eroverheen* denkt. Waar de andere projecten een taak uitvoeren, weegt cisochat langs NIST CSF 2.0 af,
+grondt zich in de normen (RAG), adviseert, en stuurt — waar nodig — het juiste instrument aan. Mens beslist.
+
+- **Standalone, niet afhankelijk.** Wie alleen cisochat draait, heeft een werkende vCISO-adviseur die externe
+  open-source tooling én zijn eigen advies-brein orkestreert. cisochat bouwt geen harde koppeling op andere
+  Commons-projecten.
+- **Wel complementair.** Wie óók andere Commons-tools draait, geeft de dirigent rijkere instrumenten om mee
+  te werken. De verhouding is "dirigent ↔ instrumenten", niet "onderdeel van een suite".
+
+**Eén-zin-pitch (README):** *"Waar de andere Security-Commons-projecten elk één security-taak uitvoeren, is
+cisochat het redenerende CISO-brein dat eroverheen denkt — adviserend, gegrond in de normen, mens beslist."*
+
+---
+
+## Vervolg
+
+Sub-project 1 (onderzoek + blueprint) is **vastgesteld**. Reviewbesluiten verwerkt: bronnen-steekproef ✅,
+router-mechanisme + bouwvolgorde akkoord, geen harde Commons-afhankelijkheid, positionering vastgelegd (§6).
+Volgende stap = **sub-project 2 (Fase A: fundament & dirigent-skelet)** als eigen brainstorm-cyclus.
+
+### Verificatie-noot (2026-06-17)
+Steekproef op de zwaarst-wegende claims, alle bevestigd: **CISO Assistant** (AGPL-3.0 + intuitem-commercieel,
+FR, 4,1k★, v3.18.1) · **Microsoft Agent Governance Toolkit** (MIT, 4,4k★, LLM-guardrail-faalclaim gegrond in
+Andriushchenko et al. ICLR 2025) · **Eramba** (terecht buiten de poort: niet-OSI) · **TheHive 5** (terecht
+uitgesloten: proprietary sinds 2021/22; DFIR-IRIS = OSS-opvolger) · **Anthropic Cybersecurity Skills**
+(bestaat, Apache-2.0, 16,1k★ — maar ⚠️ community-repo @mukul975, *niet* Anthropic-officieel).
