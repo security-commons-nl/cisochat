@@ -98,12 +98,15 @@ muur zitten. Puur-commerciële tools vallen volledig af (niet opnemen).
 4. Elke tool-claim heeft minstens één onafhankelijk citaat. Onzekerheid expliciet benoemen.
 5. Minimaal-volledigheid per functie: streef naar de relevante categorieën gedekt (niet één tool per
    functie). Bewust loggen wat NIET gevonden/gedekt is → voedt de gap-analyse.
-6. Muur: geen proprietary/organisatie-specifieke bronnen of -IP in de open-source findings.
+6. Curatie: de sweeps zoeken breed (diep & breed), maar de blueprint (Taak 7) cureert per sub-categorie
+   tot de top 2–3 volwaardige scorekaart-entries; de overige gevonden tools worden als "long tail" bij
+   naam + URL genoemd, zonder volledige scorekaart.
+7. Muur: geen proprietary/organisatie-specifieke bronnen of -IP in de open-source findings.
 ```
 
 - [ ] **Stap 3: Verificatie-gate**
 
-Controleer: alle 11 velden gedefinieerd, fit-rubriek aanwezig, protocol benoemt startbronnen + citatie-eis. Geen TODO's.
+Controleer: alle 12 velden gedefinieerd, fit-rubriek aanwezig, harde open-source-poort + curatie-regel + citatie-eis benoemd in het protocol. Geen TODO's.
 
 - [ ] **Stap 4: Commit**
 
@@ -125,7 +128,7 @@ git commit -m "docs(vciso): scorekaart + onderzoeksprotocol voor OSS-sweep"
 
 Roep de `deep-research`-skill aan met de functie-specifieke onderzoeksvraag (zie tabel). De vraag bevat altijd deze gemeenschappelijke kop:
 
-> "Lever per tool de velden van `docs/vciso/00-scorekaart.md`, met bron-citaten. **Harde poort: alleen écht open-source software — geen commerciële/proprietary tools; bij open-core beoordeel je alleen de gratis community-editie.** EU-soevereiniteit/zelf-hostbaarheid is een zachte weging: non-EU of SaaS-only OSS mag genoemd worden mét waarschuwing en lagere fit-score. Noteer per tool de **AI-native koppelbaarheid** (MCP-server, schone API, gestructureerde output) — relevant omdat de aansturende dirigent een AI is. Dek zowel governance/management-tooling als technische tooling. Benoem expliciet welke deel-capabilities GEEN volwassen OSS-optie hebben."
+> "Lever per tool de 12 scorekaart-velden (naam+URL · CSF-functie(s) · capability · korte omschrijving · rijpheid · licentie · EU-soevereiniteit · integreerbaarheid · AI-native koppelbaarheid · stack/taal · fit-score 1–5 · bronnen), met bron-citaten. **Harde poort: alleen écht open-source software — geen commerciële/proprietary tools; bij open-core beoordeel je alleen de gratis community-editie.** EU-soevereiniteit/zelf-hostbaarheid is een zachte weging: non-EU of SaaS-only OSS mag genoemd worden mét waarschuwing en lagere fit-score. Noteer per tool de **AI-native koppelbaarheid** (MCP-server, schone API, gestructureerde output) — relevant omdat de aansturende dirigent een AI is. Dek zowel governance/management-tooling als technische tooling. Benoem expliciet welke deel-capabilities GEEN volwassen OSS-optie hebben."
 
 - [ ] **Stap B: Routing-blok tonen en akkoord afwachten**
 
@@ -137,7 +140,7 @@ Schrijf de deep-research-output naar `docs/vciso/research/<functie>.md`, georden
 
 - [ ] **Stap D: Verificatie-gate**
 
-Controleer tegen de scorekaart: elke tool heeft alle 11 velden; elke claim heeft ≥1 citaat; de "Niet-gedekt"-paragraaf is ingevuld. Ontbreekt iets → terug naar Stap A voor die tool. Geen niet-geciteerde beweringen.
+Controleer tegen de scorekaart: elke tool heeft alle 12 velden; elke claim heeft ≥1 citaat; de "Niet-gedekt"-paragraaf is ingevuld. Ontbreekt iets → terug naar Stap A voor die tool. Geen niet-geciteerde beweringen.
 
 - [ ] **Stap E: Commit**
 
@@ -204,6 +207,10 @@ git commit -m "docs(vciso): cross-cutting findings AI-vCISO/CISO-in-a-box projec
 
 Lees de zeven findings-bestanden (zes CSF-functies + de AI-vCISO-meta-sweep) en de ontwerp-spec (§3 capability-tabel, §4 organen-tabel) als invoer.
 
+- [ ] **Stap 1b: Cross-functie-reconciliatie (dedup)**
+
+Veel tools dekken meerdere CSF-functies (bv. Wazuh = Detect+Respond, OpenCTI = Identify+Detect, een GRC-suite = Govern+Identify+Protect) en zijn dan in meerdere findings-bestanden opgedoken. Maak één canonieke lijst: per tool één entry, met **alle** functies die het dient en **één** afgestemde fit-score. Los tegenstrijdige scores tussen sweeps op (kies de best onderbouwde, noteer waarom).
+
 - [ ] **Stap 2: Routing-blok tonen en akkoord afwachten**
 
 > 📍 Routing-voorstel — Domein: commons · Bestemming: `docs/vciso/vciso-blueprint.md` · Aard: NIEUW · Muur-check: ✅ generiek · Reden: synthese-deliverable van het onderzoek.
@@ -211,13 +218,13 @@ Lees de zeven findings-bestanden (zes CSF-functies + de AI-vCISO-meta-sweep) en 
 - [ ] **Stap 3: Blueprint secties 1–3 schrijven**
 
 Schrijf `docs/vciso/vciso-blueprint.md` met:
-- **§1 OSS-landschap** — samenvattende tabel: per CSF-functie de top-kandidaten (naam · fit-score · licentie · EU-soeverein · integratie), met verwijzing naar het bijbehorende findings-bestand.
-- **§2 Capability-map** — tabel `CSF-functie → capability → kandidaat-invulling (bestaand Commons-tool / generieke AI-skill / externe OSS / nog-te-bouwen)`. Verrijk de §3/§4-tabellen uit de ontwerp-spec met de onderzoeksresultaten.
+- **§1 OSS-landschap** — samenvattende tabel: per CSF-functie de top-kandidaten (naam · fit-score · licentie · EU-soeverein · integratie · **AI-native**), plus per sub-categorie een **long-tail**-verwijzing (overige tools bij naam). Verwijs naar het bijbehorende findings-bestand.
+- **§2 Capability-map** — tabel `CSF-functie → capability → kandidaat-invulling (bestaand Commons-tool / generieke AI-skill / externe OSS / **reasoning+RAG: geen tool** / nog-te-bouwen)`. Verrijk de §3/§4-tabellen uit de ontwerp-spec met de onderzoeksresultaten. **Markeer expliciet** de capabilities die geen tool kennen maar door de dirigent zelf (redeneren + RAG op normen) worden ingevuld — dat is het advies-brein van de vCISO en mag niet onder de gereedschapskist verdwijnen.
 - **§3 Gap-analyse** — per CSF-functie wat ontbreekt of zwak is (verwacht zichtbaar: Respond, Recover), elk met de bron-paragraaf "Niet-gedekt" uit de findings.
 
 - [ ] **Stap 4: Verificatie-gate (spec-dekking)**
 
-Controleer: alle zes CSF-functies komen voor in §1, §2 én §3. Elke capability uit ontwerp-spec §3 staat in de capability-map. Geen lege cellen, geen "TBD".
+Controleer: alle zes CSF-functies komen voor in §1, §2 én §3; cross-functie-dedup toegepast (geen tool dubbel met afwijkende scores); reasoning+RAG-capabilities expliciet gemarkeerd; curatie toegepast (top 2–3 + long tail per sub-categorie). Elke capability uit ontwerp-spec §3 staat in de capability-map. Geen lege cellen, geen "TBD".
 
 - [ ] **Stap 5: Commit**
 
@@ -285,4 +292,4 @@ Bij akkoord: noteer in de blueprint-status "vastgesteld" + datum. Sub-project 1 
 
 **Placeholder-scan:** geen "TBD/TODO/later"; de scorekaart-inhoud staat volledig uitgeschreven in Taak 0; onderzoeksvragen staan concreet in de tabel bij Taken 1–6 en in Taak 6b.
 
-**Type-/naamconsistentie:** bestandsnamen (`00-scorekaart.md`, `research/<functie>.md`, `research/ai-vciso-meta.md`, `vciso-blueprint.md`) consistent tussen bestandsstructuur, taken en commits; de scorekaart-velden uit Taak 0 (incl. het nieuwe veld *AI-native koppelbaarheid* en de harde open-source-poort) zijn exact wat Taken 1–6b verifiëren; de zeven sweeps (zes CSF-functies + AI-vCISO-meta) consistent door Taken 7–8.
+**Type-/naamconsistentie:** bestandsnamen (`00-scorekaart.md`, `research/<functie>.md`, `research/ai-vciso-meta.md`, `vciso-blueprint.md`) consistent tussen bestandsstructuur, taken en commits; de **12** scorekaart-velden uit Taak 0 (incl. *AI-native koppelbaarheid*, harde open-source-poort) zijn exact wat de verificatie-gates van Taken 0 en 1–6b tellen; cross-functie-reconciliatie (Taak 7 stap 1b) en curatie-regel (protocol punt 6) zijn beide verankerd in de verificatie-gate van Taak 7 stap 4; de zeven sweeps (zes CSF-functies + AI-vCISO-meta) consistent door Taken 7–8.
