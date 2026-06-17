@@ -259,6 +259,52 @@ LLM-routing ervoor en een deterministische gate eronder.**
 
 ---
 
+## §4a — Afdwingbaar invariant: auditability & traceability (VERPLICHT)
+
+> Hard, niet-onderhandelbaar. Geen capability gaat live zonder hieraan te voldoen. Anker: Commons-principe
+> *"auditbaarheid by design"* + EU AI Act art. 12/14 + AVG art. 22.
+
+**Het invariant — *geen volledig auditrecord = geen output.*** De deterministische routing-gate (§4) is het
+chokepoint: de dirigent geeft géén advies en voert géén actie uit tenzij eerst een compleet, onveranderlijk
+auditrecord is weggeschreven. Geldt voor **elke output** — zowel adviezen als gated acties (een vlag
+onderscheidt de twee). Elk vCISO-besluit is zo achteraf reconstrueerbaar: *wat* is geadviseerd/besloten, op
+*welke bronnen*, met *welke rationale*, *wanneer*, door *welk model*, en *wie* (mens) besloot.
+
+**Verplichte velden per record:**
+| Veld | Inhoud |
+|---|---|
+| `event_id` | UUID v7 (tijdgeordend, sorteerbaar) |
+| `timestamp` | UTC, ISO 8601 |
+| `session_id` + vraag | sessie + oorspronkelijke vraag (of hash) |
+| `csf` / `capability` | geclassificeerde CSF-functie + capability + invullingstype ([OSS]/[Skill]/[Brein]/[Bouwen]) |
+| `model_id` + versie | welk model de voorbereiding deed |
+| `output_type` | `advies` \| `gated-besluit/actie` |
+| **bronnen** | RAG-citaten (document-IDs · kennisbank-versie · relevantie-scores) + tool-outputs (instrument · input/output-hash) |
+| **rationale** | de afweging: waarom dit, welke alternatieven gewogen, welke onzekerheid |
+| **mens** | besluit (`akkoord`/`gewijzigd`/`afgewezen`) + reviewer-id + motivering (verplicht bij afwijking) |
+| `prev_hash` + `hash` | SHA-256 hash-chain |
+
+**Opslag & integriteit:** append-only/immutable (geen UPDATE/DELETE-rechten) **én** een **SHA-256 hash-chain**
+— elk record bevat de hash van het vorige; manipulatie van één record breekt de keten en is dus verifieerbaar
+detecteerbaar. Privacy: hashes i.p.v. plaintext waar mogelijk (AVG-dataminimalisatie); persoonsgegevens in het
+spoor minimaliseren/pseudonimiseren.
+
+**Retentie:** ≥ 6 maanden (EU AI Act art. 12), **1 jaar aanbevolen**, langer bij hoog-risico.
+
+**Evidence pack (op verzoek):** een reconstrueerbaar bewijspakket uit het auditspoor — besluitenlog,
+menselijke interventies, integriteitsverklaring (hash-chain-verificatie: "geen records gemanipuleerd") en
+compliance-mapping per artikel. Formaten: JSON (machineleesbaar) + PDF (toezichthouder/management).
+
+**Compliance-anker:** EU AI Act art. 12 (logging hoog-risico) · art. 14 (menselijk toezicht) · AVG art. 22
+(uitlegbaarheid geautomatiseerde besluiten).
+
+**Consequentie voor de bouw:** het auditspoor is géén add-on achteraf — het wordt **samen met de gate in
+Fase A** gebouwd (zie §5). Observability-tooling (bv. Langfuse, open source) mag voor dagelijks debuggen, maar
+is **niet** het auditspoor: het compliance-spoor is een apart, onveranderlijk log. Dit is het "auditbaar by
+design"-principe als harde eis, niet als intentie.
+
+---
+
 ## §5 — Roadmap (gefaseerde bouw, sub-project 2 e.v.)
 
 Volgorde van waarde, afgeleid uit de gap-analyse. Elke fase is een eigen brainstorm → spec → plan-cyclus.
