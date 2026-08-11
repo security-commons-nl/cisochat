@@ -1,7 +1,7 @@
 # XORCISM voor de vCISO: hergebruik-afweging
 
 > Afweging of (delen van) het open-source platform XORCISM bruikbaar zijn voor cisochat (vCISO).
-> Bron: ATLAS-balie, sparring 30-06-2026. Zie ook `ai-agent-security-bronnen-2026-06.md`.
+> Sparringnotitie, 30-06-2026. Zie ook `ai-agent-security-bronnen-2026-06.md`.
 > Repo: github.com/XORCISM-AI/XORCISM (Meisam Eslahi).
 
 ## Conclusie

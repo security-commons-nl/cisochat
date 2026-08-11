@@ -2,8 +2,7 @@
 
 > Harde inventaris van welk normatief materiaal de RAG-grounding voedt: wat ligt klaar in Commons,
 > wat ontbreekt, en de copyright-vorm per kader. Input voor sub-project 2 (Fase A: dirigent-skelet).
-> Read-only geinventariseerd 30-06-2026 (alleen `X:/SECURITY-COMMONS-NL`; WERK-tenant + LIVIQ bewust
-> buiten scope, muur). Bron: ATLAS-balie.
+> Read-only geinventariseerd 30-06-2026, beperkt tot de eigen open-source repo's.
 
 ## Gouden regel (copyright)
 Herverspreid **samenvattingen/mappings in eigen woorden**, nooit volledige NEN/ISO-normteksten.
