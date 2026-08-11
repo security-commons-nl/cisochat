@@ -286,6 +286,98 @@ posture-feeds die je via Grafana naar bestuurlijke views kunt tillen.
 
 ---
 
+### Referentie — publieke KPI-catalogus & de operationeel-vs-bestuurlijk-valkuil
+
+Losse referentie (geen tool), gevonden 23-07-2026 · bron: Rajendra K. op LinkedIn,
+"Executive CISO Dashboard – Top 15 Cybersecurity KPIs". Bruikbaar als startcatalogus voor de
+rapportagelaag van de blueprint: Enterprise Cyber Risk Score · Critical Vulnerabilities · Patch
+Compliance · MTTD · MTTR · MTTRc (recover) · MFA Coverage · Privileged Account Protection · Zero Trust
+Maturity · Cloud Security Posture Score · Ransomware Readiness · Third-Party Risk Score · Backup &
+Recovery Success Rate · Phishing Click Rate · Compliance & Audit Status. Elke KPI met implementatie
+(SIEM/EDR/PAM/vuln-scanners/…), meetmethode, proces en rapportagecadans, plus een KPI-maturity-model.
+
+**Belangrijker dan de lijst is de kritiek eronder** (meerdere senior CISO's, o.a. Bruce Phillips, Joshua
+Walton, Malik Idodo): dit zijn overwegend *operationele/SOC-metrics*, geen *bestuurlijke* metrics. Een
+board vraagt niet "wat is onze MTTD?" maar "wat zijn onze top-risico's, zitten we binnen de risk appetite,
+gaat de trend de goede kant op, en renderen onze investeringen?". Les voor de GOVERN-rapportagelaag van de
+vCISO: vertaal operationele telemetrie naar bedrijfsrisico, trend en risk-appetite; gebruik deze 15 als
+*onderliggende* meetpunten, niet als de board-view zelf. Sluit aan op gap #2 hieronder (geen kant-en-klare
+OSS executive-board-view) en op de risk-based-reporting-lijn.
+
+---
+
+### Referentie — van dashboard naar besluit: het storytelling-raamwerk
+
+Losse referentie (geen tool), gevonden 10-08-2026 · bron: Matthijs van der Wel-ter Weel
+(MBA CISSP CISA GCTI, Commanding Dutch Cyber Reserves), LinkedIn Pulse 29-06-2026, "Cybersecurity
+storytelling: waarom je beste dashboard de bestuurskamer niet overleeft". Nederlandstalig, ~1.400 woorden.
+
+**Waarom dit hier staat.** De KPI-referentie hierboven eindigt met "vertaal operationele telemetrie naar
+bedrijfsrisico". Dit stuk levert de *vorm* waarin die vertaling landt, en dat is de ontbrekende helft: de
+board-view is niet alleen een andere set metrics, maar een ander tekstformaat. Diagnose van het artikel:
+securityrapportages zijn opgebouwd rond security in plaats van rond de organisatie (Gartner), waardoor
+bestuurders het ervaren als "het verlengen van je autoverzekering". Paradox: hoe meer data je toevoegt om
+het belang te onderstrepen, hoe sneller je je publiek kwijtraakt. "Een dashboard nodigt niet uit tot een
+besluit, het nodigt uit tot wegkijken."
+
+**Vijf bewegingen** (gebouwd op Minto, Duarte en Olson):
+
+1. **Conclusie eerst**, in één zin met "en, maar, daarom". Voorbeeld uit het artikel: *"We staan sterk op
+   onze endpoints, maar onze leveranciersketen is nu ons grootste risico, daarom vraag ik vandaag een
+   besluit."* Binnen tien seconden weet het gremium waar het over gaat; de rest is onderbouwing.
+2. **Waar we staan**, in de taal van het gremium, vastgeknoopt aan iets bekends (een lopend programma, een
+   incident bij een branchegenoot in de krant). Herkenning bouwen, geen college geven.
+3. **Wat er kantelt**: de spanning, concreet en menselijk. Niet "een kwetsbaarheid in systeem X", maar wat
+   een aanvaller daarmee kan en wat dat op een gewone dinsdagochtend betekent voor de mensen die met dat
+   systeem werken.
+4. **Wat het betekent**: de beweging die het vaakst wordt overgeslagen. Vertaal naar bestuurstaal, zodat het
+   risico vergelijkbaar wordt met de andere risico's waarover dit gremium maandelijks beslist. Niet om angst
+   te zaaien, maar om vergelijkbaarheid te maken.
+5. **Wat we kiezen**: twee toekomsten naast elkaar (met en zonder het voorstel), eerlijk over restrisico
+   ("honderd procent veiligheid bestaat niet en dat weten ze"), en eindigen met de aangekondigde besluitvraag:
+   goedkeuring, budget, of bewust geaccepteerd risico. Iets waar ja of nee op gezegd kan worden.
+
+**Do's/don'ts:** het dashboard mag blijven, maar achterin als bewijslast voor wie doorvraagt, nooit als je
+verhaal · open niet met je eerste sheet · stop met tonen wat je weet, begin met vertellen wat het betekent ·
+goed teken dat het werkt: er komen vragen. Onderbouwing die het artikel aandraagt: Chip Heath (ruim 60% kan
+na een presentatie de verhalen navertellen, geen 5% haalt één losse statistiek terug), Paul Zak (spanning
+plus herkenbaar karakter verhoogt actiebereidheid), Jerome Bruner (logisch-analytische vs. narratieve
+denkmodus; het dashboard bedient alleen de eerste, besluiten vallen vaak in de tweede).
+
+**Relevantie voor de vCISO-blueprint.** Dit is de outputspecificatie voor de rapportagelaag: een generator
+die alleen tabellen en scores oplevert, produceert precies het stuk dat het artikel als mislukt beschrijft.
+Bruikbaar als template voor de bestuurlijke samenvatting die de vCISO genereert.
+
+**Voorbehoud bij hergebruik in de publieke sector.** Het artikel is geschreven voor bedrijfsboards (omzet,
+marge, klantvertrouwen). Voor gemeenten moet beweging 4 vertaald worden naar continuïteit van
+dienstverlening, maatschappelijke schade, politiek-bestuurlijk risico en verantwoording aan de raad. Het
+NIS2/Cbw-argument dat het artikel maakt (bestuurlijk begrip is governance geworden, geen stijlkwestie) geldt
+in de publieke sector juist sterker: zie de Cbw-bestuurderstraining met persoonlijke aansprakelijkheid.
+
+---
+
+### Referentie — de security-visie op één pagina (5 toetsvragen)
+
+Losse referentie (geen tool), gevonden 10-08-2026 · bron: Geoff Hancock (CISO/CEO Advisor),
+LinkedIn-post juli 2026. Stelling: een security-visie past op één pagina; heb je veertig slides nodig, dan is
+het geen visie maar een catalogus.
+
+1. **Wat beschermen we hier?** (bijv. dienstverlening, vertrouwen van inwoners, continuïteit, gereguleerde data)
+2. **Wat zijn de 3 tot 5 dingen die de organisatie echt kunnen breken?** Niet elk risico: ransomware,
+   uitval van een kritieke leverancier, identity compromise, data-exposure, AI-misbruik.
+3. **Hoe ziet goed eruit over 2 tot 3 jaar?** Getoetst aan: kun je herstellen van een groot incident, kun je
+   nieuwe dienstverlening lanceren zonder last-minute securitychaos, kun je vertrouwen sneller aantonen.
+4. **Welke paar grote bewegingen brengen je daar?** Drie tot vijf, geen 47 initiatieven.
+5. **Kan iemand buiten security het navertellen?** De echte test: lukt dat niet, dan is de visie niet af.
+
+**Waarde en beperking.** Eén sterk frame, geen sjabloon en geen proces: het zegt niet hóe je tot die 3 tot 5
+bewegingen komt. De waarde zit in de dwang tot schrappen en in vraag 5 als kwaliteitspoort. Beste aanvulling
+uit de comments (Eiman Khorasani Rad): de test is niet de lengte, maar of de visie investeringsprioriteiten,
+risico-acceptatie en architectuurbesluiten daadwerkelijk stuurt. Combineert direct met het
+storytelling-raamwerk hierboven: vraag 1 tot en met 4 vullen bewegingen 1, 2 en 5.
+
+---
+
 ## Niet-gedekt / gaps (voedt de gap-analyse)
 
 1. **RASCI / verantwoordelijkheidstoewijzing — grootste gap.** Geen enkele volwassen, zelf-hostbare

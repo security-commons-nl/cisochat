@@ -176,6 +176,12 @@ dat aanvullende controles vereist.
   maar AI-quota/managed scanning zit in US-gehoste PDCP-cloud — ⚠️ EU-dataresidentie); CLI volledig zelf-hostbaar.
 - **Syft** (https://github.com/anchore/syft) — Apache-2.0; SBOM-generator (CycloneDX/SPDX); v1.44.0 (mei 2026);
   upstream-component van de Grype/Dependency-Track-keten; primair IDENTIFY maar voedt DETECT.
+- **mcp-security-hub** (https://github.com/FuzzingLabs/mcp-security-hub) — FuzzingLabs; 38 gedockerde MCP-servers
+  die 300+ offensive-tools ontsluiten (o.a. nmap, masscan, nuclei, sqlmap, ffuf, radare2, binwalk, yara) voor
+  AI-agent-orchestratie; niet zelf een vuln-scanner maar een **AI-native koppelbaarheidslaag** bovenop bestaande
+  tools (raakt ook IDENTIFY via nmap/masscan-recon). ⚠️ Licentie/rijpheid per onderliggende tool nog niet
+  individueel geverifieerd (long-tail, geen 12-velden-scorekaart); alleen voor geautoriseerde security-testing.
+  Bron: gevonden 03-07-2026.
 
 ---
 
@@ -343,6 +349,56 @@ De ruggengraat hier is **Sigma** (vendor-neutraal regelformaat). **YARA/YARA-X**
 - **Chainsaw** (https://github.com/WithSecureLabs/chainsaw) — **GPL-3.0**; v2.14.x; Rust; snelle DFIR-triage van Windows-
   forensische artefacten (EVTX/MFT/Shimcache/SRUM/ESE) via Sigma (tau-engine); EU-oorsprong (WithSecure, FI).
 - **YARA klassiek** (https://github.com/VirusTotal/yara) — BSD-3-Clause; v4.5.5 (okt 2025, maintenance); kies YARA-X voor nieuw werk.
+
+---
+
+### Referentie — Detection Engineering Maturity Matrix (meetinstrument, geen tool)
+
+Losse referentie, gevonden 10-08-2026 · bron: Kyle Bailey (@kylebailey22),
+`detectionengineering.io` · repo `github.com/k-bailey/detection-engineering-maturity-matrix`.
+Gepubliceerd april 2021, **document zelf laatst inhoudelijk bijgewerkt september 2022** (repo wel actief,
+laatste push juli 2026, ~100 stars).
+
+Waar dit hoofdstuk tools inventariseert, meet deze matrix de **functie** eromheen. Opzet: 4 categorieën met
+9 subcategorieën, elk tegen 3 niveaus (**Defined · Managed · Optimized**). Geen scoringsformule, wel per cel
+een gedragsbeschrijving, wat het bruikbaar maakt als zelfbeoordeling en als roadmap.
+
+| Categorie | Subcategorie | Kern van de opklim |
+|---|---|---|
+| People | Leadership | van "begrijpt detectie globaal, andere prioriteiten" → "pleit actief voor betrokkenheid, tooling, licenties en bezetting" |
+| People | Team | van ad-hoc taak bij IR → toegewijde mensen → team met benoemde SME's per domein (host, netwerk, applicatie, cloud) |
+| Process | Detection Process | van geen strategie en geen backlog → gedefinieerde workflow → continu geïtereerde strategie, review- en goedkeuringsproces mét IR vooraf, prioritering op threat intel en threat modeling, proactief gevonden SIEM-storingen |
+| Process | Metrics | van nauwelijks metrics → alert fidelity, MTTD, geautomatiseerde afhandeling → gedefinieerde KPI's, geautomatiseerde verzameling, **automatisch getabelleerde MITRE ATT&CK-dekking** |
+| Technology | Detection-as-Code | van niet gevolgd → versiebeheer plus CI/CD, maar linting/testing beperkt → DaC in de teamcultuur, review, linting en testing in de pijplijn, deels end-to-end geautomatiseerd getest |
+| Technology | SIEM | van log-uitval en fouten worden niet gealarmeerd → health-alerting op kritieke bronnen → expressieve querytaal, grotendeels realtime logica, robuuste health-alerting op álle bronnen |
+| Technology | Visibility | van zicht is onbekend en kritieke bronnen ontbreken → bronnen gecatalogiseerd en geprioriteerd → detectieteam bepáált de kritieke bronnen en er liggen **SLA's met logleveranciers** op uitval en latency |
+| Detection | Detection Content | van out-of-the-box en IOC-gericht → getuned en meer TTP-gebaseerd → primair gedrag/TTP, ML en statistiek waar zinnig, sterke nadruk op risk-based alerting met laterale en externe context |
+| Detection | Response Experience | van alles even belangrijk en meer alerts dan behapbaar → prioriteit zichtbaar, verrijking groeit → verrijkt met context voor een accuraat risicobeeld, en **nieuwe detectie mag pas naar productie mét automatisering en verrijking** |
+| Detection | Threat Operations | van geen simulatie, alleen verplichte pentests → purple team ad hoc, red team periodiek → prioritering op actieve dreigingen vanuit threat intel, doorlopende purple teaming, volwassen red team dat dagelijks met detectie samenwerkt |
+
+**Relevantie voor de blueprint.** De negen subcategorieën mappen vrijwel één-op-één op de secties hierboven
+(§3 SIEM en Visibility, §4 Sigma en detection-as-code, OpenCTI onder Threat Operations). Daarmee is dit het
+ontbrekende *meet*-laagje bij de tool-inventarisatie: een vCISO kan hiermee onderbouwen wáárom een tool nodig
+is in plaats van alleen wélke. De Metrics-rij levert bovendien een concreet ambitieniveau (automatische
+ATT&CK-dekkingsberekening) dat direct aansluit op de rapportagelijn in `govern.md` §5.
+
+**Wegingen vóór gebruik.**
+1. **Peildatum.** Inhoudelijk stilgevallen in september 2022, en de auteur zet er zelf boven dat de matrix
+   **AI mist** in een moderne detectiefunctie. Dat is een serieus gat: precies de laag waar cisochat over gaat.
+   Gebruiken als basis, niet als actueel kader; een AI-rij is een voor de hand liggende eigen aanvulling.
+2. **Licentie ontbreekt.** De repo heeft geen licentiebestand, dus formeel alle rechten voorbehouden. Citeren
+   en ernaar verwijzen kan; letterlijk overnemen in een eigen open-source product niet zonder toestemming.
+   Zelfde categorie als de andere licentie-attentiepunten onderaan dit hoofdstuk.
+3. **Aanname van een eigen detectieteam.** De matrix is geschreven voor organisaties die detectie zelf doen.
+   Bij een gemeente met uitbestede monitoring meet je op People en Process vooral je **leverancier**, niet
+   jezelf. Dat maakt de matrix niet onbruikbaar, maar wel te vertalen: welke niveaus koop je in, welke horen
+   contractueel geborgd te zijn (de Visibility-rij over SLA's op loguitval en latency is daarvoor het
+   scherpste haakje), en welke moet je zelf kunnen.
+
+Aanvullend materiaal dat de bron noemt: BSidesSF 2022 "Detection-as-Code: Why it works and where to start" ·
+SANS Blue Team Summit 2021 "Measuring Detection Engineering Teams". Verwante, actievere modellen om tegen af
+te zetten: Elastic DEBMM (tiers 0 t/m 5, gedrag plus meetpunten) en het oudere DML-model van Ryan Stillions
+(8 niveaus, gericht op het consumeren van threat intelligence).
 
 ---
 

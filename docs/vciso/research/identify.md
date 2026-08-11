@@ -3,7 +3,8 @@
 > **Scope.** Dit document inventariseert open-source tooling voor de NIST CSF 2.0-functie **IDENTIFY** (ID)
 > ten behoeve van een generieke, framework-agnostische vCISO-blueprint. De functie IDENTIFY omvat
 > asset- & data-inventarisatie (CMDB/discovery), risk register & risicobeoordeling, threat modeling,
-> compliance-mapping & gap-analyse, en threat intelligence. Per sub-categorie zijn de **top 2–3 tools**
+> compliance-mapping & gap-analyse, threat intelligence, en extern aanvalsoppervlak-discovery (ASM).
+> Per sub-categorie zijn de **top 2–3 tools**
 > volledig uitgewerkt (12-velden scorekaart); overige vondsten staan als *long tail* (naam + URL + 1 zin).
 > Harde poort: **alléén open source** — open-core wordt beoordeeld op uitsluitend de community-editie,
 > met expliciete vermelding van wat achter de betaalmuur zit. Licentie-vallen (BSL/SSPL/Commons Clause/
@@ -409,6 +410,197 @@ kennisgraaf-aanpak). AIL Framework vult aan voor OSINT/leak-analyse.
 
 ---
 
+## 6. Extern aanvalsoppervlak-discovery (ASM/EASM)
+
+§1 dekt de **binnenkant** van het asset-universum: CMDB, IPAM, agent-discovery. Deze paragraaf dekt de
+**buitenkant**: wat ziet een aanvaller zonder enige toegang? Voor lokale overheden is dat een reële
+blinde vlek, omdat het aanvalsoppervlak versnipperd is over eigen netblokken, hosters, SaaS en
+projectsites die niemand meer beheert. Een CMDB die alleen vult wat de organisatie zelf aanmeldt,
+mist per definitie de vergeten omgevingen. Externe discovery is juist daar het controlemiddel:
+het toetst zelfrapportage aan waarneembare werkelijkheid.
+
+Het open-source landschap is hier ruimer dan bij GRC. **OWASP Amass** is de rijpste losse tool, de
+**ProjectDiscovery-suite** de sterkste pijplijn-benadering, en **IVRE** het enige project dat de
+volledige Shodan-functie in eigen beheer benadert.
+
+### 6.1 OWASP Amass — *primaire aanbeveling extern aanvalsoppervlak*
+
+1. **Naam + URL:** OWASP Amass — https://github.com/owasp-amass/amass — https://owasp.org/www-project-amass/
+2. **CSF-functie(s):** IDENTIFY (ID.AM asset-inventarisatie vanaf de buitenkant, ID.RA blootstellingsanalyse). Raakt DETECT: periodieke herhaling signaleert nieuw opgekomen blootstelling.
+3. **Capability:** OSINT-gedreven mapping van het externe aanvalsoppervlak: subdomein-enumeratie, DNS-, certificaat- en ASN-analyse, opbouw van een doorzoekbare asset-graaf.
+4. **Omschrijving:** OWASP-project en de facto open-source tegenhanger van commerciële EASM-diensten.
+   Combineert tientallen passieve bronnen (CT-logs, passive DNS, web-archieven, zoekmachines) met
+   optionele actieve verificatie. Versie 5 is een architectuurherbouw: de datastructuur zit nu in
+   aparte repo's (`open-asset-model` voor het model, `asset-db` voor opslag), waardoor de uitkomst een
+   bevraagbare graaf is in plaats van een platte lijst. Dat maakt herhaalde runs vergelijkbaar, wat
+   voor een vCISO belangrijker is dan de eenmalige vondst.
+5. **Rijpheid:** **Hoog.** 14.954 sterren, 2.167 forks. v5.1.1 uitgebracht 7 april 2026; v5.0.0 op
+   3 augustus 2025; laatste commit-activiteit 19 juli 2026. Release-cadans is laag (v4.2.0 dateert van
+   september 2023), maar de sprong naar v5 was een volledige herbouw en het project is aantoonbaar actief.
+6. **Licentie:** **Apache-2.0** (OSI-goedgekeurd, permissief). Geen open-core, geen betaalde editie.
+   ⚠️ *Verificatienoot:* GitHub toont bij deze repo "NOASSERTION". Dat komt doordat het `LICENSE`-bestand
+   opent met een copyrightregel ("Copyright 2017-2026 Jeff Foley. All rights reserved. License: Apache2.0")
+   bóven de licentietekst, waardoor de automatische detectie afhaakt. De tekst zelf is onverkort de
+   Apache License 2.0, en alle bijbehorende org-repo's (`open-asset-model`, `asset-db`, `resolve`, `docs`)
+   staan expliciet op Apache-2.0. Dit is dus géén licentie-val, maar wel een geval waar een directory
+   die alleen het GitHub-label leest de verkeerde conclusie trekt.
+7. **EU-soevereiniteit:** ✅ Volledig zelf-hostbaar (binary of Docker), database blijft lokaal.
+   Kanttekening: de dekking van de passieve bronnen hangt af van API-sleutels bij externe partijen
+   (veelal VS). Zonder sleutels werkt de tool, met minder resultaat. De query's zelf gaan dan wel
+   naar die derden, wat bij gebruik op eigen gemeentelijke domeinen een bewuste keuze vraagt.
+8. **Integreerbaarheid:** CLI-first. JSON-output; `asset-db` (SQLite of PostgreSQL) is direct met SQL
+   te bevragen. Geen REST-service in de kern, dus koppelen gebeurt via de database of de output.
+9. **AI-native koppelbaarheid:** Deels. Gestructureerde JSON plus een bevraagbare graaf zijn goed
+   AI-koppelbaar; geen native MCP-server (peildatum augustus 2026).
+10. **Stack/taal:** Go. SQLite/PostgreSQL voor `asset-db`.
+11. **Fit-score: 5/5.** Rijpste open-source ASM-tool, permissief gelicentieerd, OWASP-governance,
+    zelf-hostbaar, en met v5 een datamodel dat herhaalmeting mogelijk maakt. Beste startpunt voor het
+    ASM-component van de blueprint.
+12. **Bronnen:**
+    - https://github.com/owasp-amass/amass (v5.1.1, april 2026; 14.954 sterren, geverifieerd 09-08-2026)
+    - https://github.com/owasp-amass/amass/blob/master/LICENSE (Apache-2.0-tekst)
+    - https://github.com/owasp-amass/open-asset-model · https://github.com/owasp-amass/asset-db (beide Apache-2.0)
+
+---
+
+### 6.2 ProjectDiscovery-suite — *aanbeveling voor pijplijn- en CI-gedreven ASM*
+
+1. **Naam + URL:** subfinder, httpx, naabu, nuclei, asnmap — https://github.com/projectdiscovery
+2. **CSF-functie(s):** IDENTIFY (ID.AM/ID.RA externe inventarisatie en blootstelling). `nuclei` raakt nadrukkelijk DETECT en PROTECT (kwetsbaarheidsdetectie).
+3. **Capability:** Modulaire keten: `asnmap` (ASN naar netblokken, scope-bepaling) → `subfinder` (passieve subdomein-enumeratie) → `httpx` (HTTP-probing en fingerprinting) → `naabu` (poortscan) → `nuclei` (template-gebaseerde checks).
+4. **Omschrijving:** Geen platform maar losse Unix-achtige tools die op elkaar aansluiten via stdin/stdout
+   en JSON. Precies dat maakt ze geschikt voor een vCISO-pijplijn: elke stap is los te vervangen, te
+   loggen en te herhalen, en het geheel draait ongewijzigd in een cron-job of CI-pipeline. `nuclei` is
+   met 30k sterren het zwaartepunt van het ecosysteem en heeft een grote, community-onderhouden
+   templatecollectie.
+5. **Rijpheid:** **Hoog**, en dit is de actiefste familie in dit hele document. Peildatum 9 augustus 2026:
+   `nuclei` v3.11.1 (8 aug 2026, 30.395 sterren) · `subfinder` v2.15.0 (5 aug 2026, 14.159) ·
+   `httpx` v1.10.0 (9 juli 2026, 10.255) · `naabu` v2.6.1 (5 mei 2026, 6.166) · `asnmap` (1.115,
+   commit-activiteit 5 aug 2026). Alle vijf onge-archiveerd en wekelijks actief.
+6. **Licentie:** **MIT** voor alle vijf (OSI-goedgekeurd, permissief). Naast de tools bestaat een
+   commercieel cloud-platform (ProjectDiscovery Cloud Platform), maar dat is een *laag ernaast*, geen
+   open-core-uitholling: de CLI's zijn volledig functioneel zonder account, en cloud-upload is een
+   expliciete opt-in-vlag (`-dashboard`, `-auth`). Wie die vlaggen niet gebruikt, stuurt niets weg.
+   Aandachtspunt voor beleid: de vlaggen bestaan wél, dus leg vast dat ze uit blijven.
+7. **EU-soevereiniteit:** ✅ Volledig zelf-hostbaar, single binaries, geen verplichte dienst.
+   Zelfde kanttekening als bij Amass: `subfinder` bevraagt externe bronnen, dus het passieve deel lekt
+   de gezochte domeinnamen naar derden tenzij je de bronnenlijst beperkt.
+8. **Integreerbaarheid:** Uitstekend. Alle tools zijn ook als Go-library te gebruiken; `-json`-output
+   overal; ontworpen voor ketening. `nuclei`-templates zijn YAML en dus zelf te schrijven en te reviewen.
+9. **AI-native koppelbaarheid:** **Ja, sterkste van de drie.** Schone JSON per stap, deterministische
+   CLI-aanroepen en een tekstueel templateformaat: dit is de kandidaat die zich het beste laat
+   MCP-wrappen voor een vCISO-dirigent. Geen officiële MCP-server (peildatum augustus 2026).
+10. **Stack/taal:** Go (alle vijf).
+11. **Fit-score: 4/5.** Permissief, extreem actief, en qua orchestreerbaarheid de beste fit voor een
+    AI-gedreven blueprint. Eén punt aftrek omdat het geen samenhangend product is: inventaris, historie
+    en rapportage moet je zelf bouwen bovenop de output. Complementair aan Amass (Amass = graaf en
+    herhaalmeting; ProjectDiscovery = pijplijn en verificatie).
+12. **Bronnen:**
+    - https://github.com/projectdiscovery/subfinder · /httpx · /naabu · /nuclei · /asnmap (versies en
+      sterrentallen geverifieerd via de GitHub-API op 09-08-2026)
+    - https://github.com/projectdiscovery/nuclei#readme (cloud-tier als opt-in beschreven)
+
+---
+
+### 6.3 IVRE — *aanbeveling voor een zelf-gehoste Shodan-achtige functie*
+
+1. **Naam + URL:** IVRE — https://github.com/ivre/ivre — https://ivre.rocks/
+2. **CSF-functie(s):** IDENTIFY (ID.AM externe asset-database, ID.RA blootstelling). Raakt DETECT (passieve sensordata, passive DNS).
+3. **Capability:** Recon-framework dat eigen scandata en externe bronnen samenbrengt in één doorzoekbare database met web-UI: netwerkinventaris, passive DNS, flow-analyse, en een eigen EASM-view.
+4. **Omschrijving:** Waar Amass en de ProjectDiscovery-tools losse meetinstrumenten zijn, is IVRE de
+   *bewaarlaag*: het slikt output van Nmap, Masscan, Zeek, p0f en de ProjectDiscovery-tools en maakt
+   daar een bevraagbare database van. De projectbeschrijving is expliciet dat dit de architectuur is
+   om "je eigen, volledig zelf-beheerde alternatief voor Shodan, ZoomEye, Censys en GreyNoise" te
+   bouwen. Voor een gemeente die niet afhankelijk wil zijn van een Amerikaanse SaaS is dit het meest
+   directe antwoord, tegen de prijs van eigen bouw- en beheerinspanning.
+5. **Rijpheid:** **Midden–hoog.** 4.109 sterren, 699 forks. Laatste getagde release v0.9.21 dateert van
+   25 september 2024, maar de hoofdlijn loopt gewoon door: commits van 5 en 26 juli 2026 (upload-pagina
+   in de web-UI, database-fixes), laatste push 5 augustus 2026. Praktische consequentie: wie IVRE
+   inzet draait feitelijk vanaf `main` of een container, niet vanaf de laatste tag. Dat is een reëel
+   beheersrisico dat expliciet belegd moet worden.
+6. **Licentie:** **GPL-3.0** (OSI-goedgekeurd, sterk copyleft). Geen open-core, geen betaalde editie.
+   Copyleft-implicatie: afgeleide distributies moeten onder GPL-3.0 vrijgegeven worden. Voor interne
+   inzet bij een gemeente geen bezwaar; wél relevant als Commons er een product omheen zou bouwen.
+7. **EU-soevereiniteit:** ✅✅ Uitstekend. Frans project, volledig zelf-hostbaar, en het enige in deze
+   paragraaf waarbij de data-verzameling zelf in eigen beheer kan blijven (eigen scans, eigen sensoren)
+   zonder query's naar derden.
+8. **Integreerbaarheid:** Python-library plus CLI plus web-UI en REST-API. Slikt Nmap-XML, Masscan,
+   Zeek-logs en ProjectDiscovery-output. MongoDB, PostgreSQL, SQLite en Elasticsearch als backends.
+9. **AI-native koppelbaarheid:** Deels. Python-library is direct aanroepbaar vanuit een agent en de
+   database is bevraagbaar; geen native MCP-server (peildatum augustus 2026).
+10. **Stack/taal:** Python. MongoDB (primair), alternatief PostgreSQL/SQLite/Elasticsearch.
+11. **Fit-score: 4/5.** Enige open-source antwoord op de Shodan-functie als geheel, sterke EU-positie,
+    OSI-copyleft. Aftrek voor de trage release-cadans en de bouw- en beheerlast: dit is infrastructuur,
+    geen tool die je in een middag draait.
+12. **Bronnen:**
+    - https://github.com/ivre/ivre (GPL-3.0; v0.9.21 sep 2024; commits juli 2026; geverifieerd 09-08-2026)
+    - https://ivre.rocks/ (projectpositionering als zelf-gehoste Shodan/Censys-tegenhanger)
+
+---
+
+### Long tail — ASM
+
+Alle onderstaande gegevens zijn op 09-08-2026 geverifieerd via de GitHub-API (licentie, laatste release,
+laatste activiteit).
+
+- **theHarvester** (https://github.com/laramies/theHarvester) — OSINT-verzameling van e-mailadressen,
+  subdomeinen en namen uit publieke bronnen; v4.11.1 (juni 2026), 16.988 sterren, activiteit op de dag
+  van verificatie. ⚠️ Licentie-noot: er staat géén `LICENSE`-bestand in de repo-root, waardoor GitHub
+  geen licentie toont; `pyproject.toml` verklaart **GPL-2.0-only**. Bruikbaar, maar de licentie is
+  minder hard vastgelegd dan bij de drie hierboven.
+- **massdns** (https://github.com/blechschmidt/massdns) — GPL-3.0; bulk-DNS-resolver; 3.627 sterren;
+  activiteit april 2026. Geen ASM-tool op zichzelf maar de bouwsteen onder snelle subdomein-enumeratie.
+- **asnmap** (https://github.com/projectdiscovery/asnmap) — MIT; ASN naar CIDR-mapping; 1.115 sterren;
+  actief. Klein maar precies wat je nodig hebt om de scope van een ASM-run te onderbouwen ("welke
+  netblokken zijn eigenlijk van ons?").
+- **SpiderFoot** (https://github.com/smicallef/spiderfoot) — MIT; 20.126 sterren, de bekendste naam in
+  deze lijst; automatiseert OSINT over 200+ modules met web-UI. ⚠️ **Stagnatie:** laatste release v4.0
+  dateert van april 2022, laatste commit-activiteit april 2026. Het commerciële vervolg (SpiderFoot HX)
+  heeft de aandacht overgenomen. Sterrental is hier dus een misleidende rijpheidsindicator; niet
+  aanbevelen zonder eigen onderhoudsafspraak.
+- **Sudomy** (https://github.com/screetsec/Sudomy) — MIT; shell-gebaseerde subdomein-enumeratie;
+  2.418 sterren; **laatste activiteit juni 2024**, feitelijk stil. Alleen noemen voor volledigheid.
+- **crt.sh** (https://crt.sh) — publieke Certificate-Transparency-zoekdienst, gratis, en nog steeds de
+  goedkoopste betrouwbare bron voor subdomein- en certificaatinventarisatie. Correctie op de eerdere
+  notitie in dit document: het is niet alleen een dienst maar heeft ook een **open stack**. De
+  broncode staat onder https://github.com/crtsh (`certwatch_db`, `cert_processor`, `ctlint`,
+  `ctloglists`), alle **GPL-3.0** en actief (commits mei tot augustus 2026). De dienst wordt beheerd
+  door Sectigo. Praktisch: gebruik de publieke dienst, maar weet dat zelf draaien mogelijk is.
+
+---
+
+### Licentie-vallen en niet-open alternatieven bij ASM
+
+- ⚠️ **Sn1per Community Edition** (https://github.com/1N3/Sn1per) — **géén open source**, ondanks
+  10.742 sterren en publieke broncode. `LICENSE.md` is een EULA van Sn1perSecurity LLC die verbiedt om
+  de code te her-licentiëren, te hernoemen of er een product of dienst van af te leiden (betaald óf
+  gratis), naamsvermelding verplicht stelt, en waarin de leverancier zich het recht voorbehoudt de
+  voorwaarden eenzijdig te wijzigen en de licentie te beëindigen. Voldoet niet aan de OSI Open Source
+  Definition en valt daarmee buiten de harde poort van dit onderzoek, net als Eramba (§2) en de
+  Microsoft Threat Modeling Tool (§3). Dit is de belangrijkste licentie-val in deze categorie, juist
+  omdat de tool in commerciële directory's zonder kanttekening tussen de gratis ASM-tools staat.
+- **Shodan** (https://www.shodan.io) is inhoudelijk sterk (passieve banner-database over de IPv4-ruimte,
+  Monitor-alerts op eigen netblokken, API en CLI) maar **volledig proprietary SaaS**: geen broncode,
+  geen zelf-hosting, data in de VS. Wel vermelden als gratis-tot-goedkoop meetinstrument, niet opnemen
+  als blueprint-component. Zelfde beoordeling voor **Censys**, **BinaryEdge**, **Netlas**, **ZoomEye**
+  en **FOFA**. Aandachtspunt bij alle zes: de resultaten zijn versie-banner-matching op een
+  momentopname, dus een *signaal* en geen *bevinding*. Toetsing tegen de werkelijke configuratie blijft
+  nodig voordat er conclusies aan hangen.
+- **Geen tool, wel relevant:** de **Shadowserver Foundation** (https://www.shadowserver.org) levert
+  netwerkeigenaren kosteloos dagrapporten over blootgestelde en gecompromitteerde systemen binnen hun
+  eigen ASN/CIDR. Voor Nederlandse gemeenten loopt zulke signalering deels via NCSC/IBD. Vóór je een
+  ASM-component in een blueprint opneemt, hoort de vraag: komt dit al binnen via een bestaand kanaal?
+
+### Grens die bij deze categorie hoort
+
+Passief opzoeken raakt het doelsysteem niet en is daarmee iets anders dan actief scannen (`naabu`,
+`nuclei`, Nmap en Masscan raken het wél). Voor alles wat actief is geldt: alleen op eigen assets of
+met aantoonbare opdracht. Vondsten bij derden horen via een CVD-route, niet via een e-mail met een
+screenshot. Voor een vCISO-blueprint betekent dit dat de ASM-pijplijn een expliciete scope-definitie
+(zie `asnmap`, §6.2) als eerste stap hoort te hebben, niet als nagedachte.
+
+---
+
 ## Niet-gedekt / gaps
 
 Na dit brede onderzoek zijn de volgende witte vlekken geïdentificeerd:
@@ -441,6 +633,23 @@ CISO Assistant ondersteunt EU AI Act-mapping (framework aanwezig), maar gespecia
 tooling voor AI-governance (model-risicobeoordeling, AI-system-inventarisatie) is nog embryonaal.
 **VerifyWise** (MIT, vroeg stadium) is de enige veelbelovende kandidaat.
 
+### Continue ASM-monitoring als kant-en-klaar product
+
+De categorie zelf is niet langer een gap: §6 dekt hem met drie bron-geverifieerde tools. Wat er
+binnen die categorie níet is, is een open-source equivalent van **Shodan Monitor**: een dienst die
+je eigen netblokken permanent bewaakt en alarmeert bij nieuwe blootstelling, zonder dat je er zelf
+infrastructuur voor optuigt. Amass en de ProjectDiscovery-tools zijn meetinstrumenten die je zelf
+moet inplannen, versioneren en vergelijken; IVRE (§6.3) levert de bewaarlaag maar vraagt eigen bouw
+en beheer. Het verschil tussen "we hebben de tools" en "we merken het als er morgen iets nieuws
+online staat" is hier dus nog steeds werk. Voor een vCISO-blueprint is dat juist het interessante
+deel, want het is precies de orchestratie-taak die de dirigent kan invullen.
+
+Tweede, hardere grens: de **passieve internetbrede bannerdekking** van Shodan/Censys is niet
+open-source te repliceren zonder zelf de IPv4-ruimte te scannen, wat voor een gemeente noch
+proportioneel noch wenselijk is. Wie die dekking wil, koopt hem of gebruikt hem niet.
+
 ---
 
 *Peildatum: juni 2026. Alle licentie- en versiegegevens geverifieerd via directe bronraadpleging.*
+*§6 (extern aanvalsoppervlak/ASM) toegevoegd op 09-08-2026; licentie, laatste release en activiteit*
+*van alle genoemde repo's op die datum geverifieerd via de GitHub-API, niet via een tooldirectory.*

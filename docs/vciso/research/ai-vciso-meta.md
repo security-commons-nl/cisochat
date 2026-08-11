@@ -27,7 +27,7 @@ met AI/LLM/agents. Ordeningsframe: NIST CSF 2.0 (Govern · Identify · Protect �
 | **Bronnen** | https://github.com/intuitem/ciso-assistant-community · https://intuitem.gitbook.io/ciso-assistant · https://www.helpnetsecurity.com/2026/01/14/ciso-assistant-open-source-cybersecurity-management-grc/ |
 | **CSF-dekking** | Govern (risk register, beleid, frameworks) en Identify (asset context, gap-analyse, TPRM) zijn primair. Protect via AppSec-module. Detect/Respond/Recover niet gedekt. |
 | **Aanpak** | Workflow + rule-based control-mapping; LLM/RAG in ontwikkeling (chat-module aanwezig, RAG gepland) |
-| **Herbruikbaarheid** | Framework-library (150+ frameworks als YAML/JSON), control-mapping engine, en TPRM-module direct herbruikbaar als kennislaag voor onze dirigent. Het dossier-register-concept in ATLAS spiegelt de CISO Assistant-structuur. Overweeg MCP-koppeling als compliance-backend. |
+| **Herbruikbaarheid** | Framework-library (150+ frameworks als YAML/JSON), control-mapping engine, en TPRM-module direct herbruikbaar als kennislaag voor onze dirigent. Het dossier-registerconcept uit onze referentie-architectuur spiegelt de CISO Assistant-structuur. Overweeg MCP-koppeling als compliance-backend. |
 
 ---
 
@@ -93,7 +93,7 @@ met AI/LLM/agents. Ordeningsframe: NIST CSF 2.0 (Govern · Identify · Protect �
 | **Bronnen** | https://github.com/microsoft/agent-governance-toolkit · https://opensource.microsoft.com/blog/2026/04/02/introducing-the-agent-governance-toolkit-open-source-runtime-security-for-ai-agents/ |
 | **CSF-dekking** | Govern (policy enforcement, audit trails, compliance-mapping) en Protect (identity, sandboxing, tool-poisoning-detectie) zijn dominant. Detect via MCP Security Gateway en PromptDefense. |
 | **Aanpak** | Rule-based policy enforcement (deterministisch, niet probabilistisch) + identity mesh + audit-log |
-| **Herbruikbaarheid** | Policy-as-code patroon (YAML/OPA) voor het bewaken van agentic acties is direct toepasbaar op de routing-gate en noorderster in ATLAS. Tamper-evident Merkle audit trail = blauwdruk voor decisions/log. MCP Security Gateway beschermt tool-aanroepen van de dirigent. |
+| **Herbruikbaarheid** | Policy-as-code patroon (YAML/OPA) voor het bewaken van agentic acties is direct toepasbaar op een routing-gate met de mens als eindbeslisser. Een tamper-evident Merkle audit trail is de blauwdruk voor een append-only besluitenlog. MCP Security Gateway beschermt tool-aanroepen van de dirigent. |
 
 ---
 
@@ -281,7 +281,7 @@ met AI/LLM/agents. Ordeningsframe: NIST CSF 2.0 (Govern · Identify · Protect �
 Dit is de kernleverantie: concrete patronen en valkuilen die het cisochat-orkestratie-ontwerp informeren.
 
 ### Patroon 1: Gelaagde geheugenarchitectuur (AiSOC-blauwdruk)
-AiSOC's drielaagse geheugen (sessie / werkgeheugen / institutioneel) is de rijpste implementatie van context-management in een security-agent. De dirigent moet dit onderscheid expliciet maken: wat vergeet hij na de sessie, wat houdt hij bij per case, en wat kristalliseert als institutionele kennis in de wiki-laag? De huidige `_VOLGENDE-KEER.md`-structuur in ATLAS is een rudimentaire versie hiervan; de agent-architectuur heeft een formeler model nodig.
+AiSOC's drielaagse geheugen (sessie / werkgeheugen / institutioneel) is de rijpste implementatie van context-management in een security-agent. De dirigent moet dit onderscheid expliciet maken: wat vergeet hij na de sessie, wat houdt hij bij per case, en wat kristalliseert als institutionele kennis in de wiki-laag? Een overschrijfbare stand-van-zaken-laag naast een append-only sessielog is een rudimentaire versie hiervan; de agent-architectuur heeft een formeler model nodig.
 
 ### Patroon 2: Progressive disclosure voor token-efficiëntie (Anthropic Cybersecurity Skills)
 De agentskills.io-aanpak — YAML-frontmatter (~30 tokens) voor ontdekking, volledige workflow (~500–2.000 tokens) on-demand laden — is dé oplossing voor de trade-off tussen breedte en diepte in de dirigent. Implementeer skills als twee-laags bestanden: routing-header (klein) + uitvoeringsprotocol (groot). Laad de tweede laag alleen als de eerste matcht.
@@ -293,7 +293,7 @@ Elk security-domein heeft zijn eigen tool-universe. MCP-servers zijn de juiste a
 De fundamentele les van het Agent Governance Toolkit: LLM-gebaseerde guardrails falen onder adaptieve aanvallen (100% aanvalsratio op GPT-4o, Claude 3, Llama-3). Verboden acties moeten *structureel onmogelijk* zijn (application-layer interception vóór tool-uitvoering), niet afhankelijk van het model dat "nee" zegt. Dit is de technische implementatie van de noorderster: de routing-gate moet deterministische policy checks bevatten, geen LLM-gebaseerde zelfreflectie.
 
 ### Patroon 5: Audit-by-design met Investigation Ledger (AiSOC)
-Elke LLM-prompt, toolaanroep, evidentiebron en beslissing moet gelogd worden in een tamper-evident audit trail (AiSOC's Investigation Ledger / AGT's Merkle-audit). Dit is niet alleen good practice — het is de technische implementatie van "auditbaar by design" uit het ATLAS-operating manual. De `decisions/log` in ATLAS is het semantische equivalent; de dirigent-architectuur heeft een machineleesbare variant nodig.
+Elke LLM-prompt, toolaanroep, evidentiebron en beslissing moet gelogd worden in een tamper-evident audit trail (AiSOC's Investigation Ledger / AGT's Merkle-audit). Dit is niet alleen good practice — het is de technische implementatie van het principe "auditbaar by design". Een append-only besluitenlog is het semantische equivalent; de dirigent-architectuur heeft een machineleesbare variant nodig.
 
 ### Patroon 6: Benchmark-gegronde verwachtingen (ITBench)
 ICML 2025: state-of-the-art modellen lossen slechts 25,2% van CISO-compliance-scenario's autonoom op. Dit is geen reden tot pessimisme maar wel een kalibratiepunt: de dirigent moet ontworpen worden als *decision support en voorbereiding*, niet als volledig autonome uitvoerder. Human-in-the-loop is niet alleen ethisch vereist (noorderster) maar ook praktisch noodzakelijk voor de huidige generatie modellen.
@@ -323,4 +323,20 @@ De dirigent-architectuur moet deze specialisaties respecteren: niet proberen all
 
 ---
 
-*Onderzoek uitgevoerd door AI-onderzoeksagent, peildatum juni 2026. Alle claims zijn geverifieerd via directe GitHub-fetch of primaire bronnen. Sterren-aantallen zijn point-in-time en kunnen fluctueren.*
+## Werkwijze-referenties
+
+### "The 5 Levels of Claude Code for Security Engineering" (SecEngAI, juli 2026)
+Geen OSS-project maar een volwassenheidsmodel voor hoe een security engineer (of AI-vCISO) Claude Code
+inzet — relevant als maturity-frame voor de eigen werkwijze en voor klantgesprekken:
+- **L1** losse prompts → **L2** project-context (CLAUDE.md) → **L3** eigen skills voor vaste workflows →
+  **L4** MCP-koppelingen met de security-stack (repos, SIEM, Slack; voorbeelden GitHub/Falcon/Splunk) →
+  **L5** autonome agent-patronen met hand-off (referentie: Cloudflare Project Glasswing).
+- Kernclaim: zonder L1-4 eerst opbouwen maakt Claude Code je *slechter* in je werk.
+- Bron: https://labs.secengai.com/p/the-5-levels-of-claude-code-for-security-engineering
+  (via M.F. "Rama" Akbar; gevonden 23-07-2026).
+- Positionering cisochat: de dirigent-architectuur zit qua opzet op L3-4 (skills + MCP, gated
+  autonomie); L5 alleen binnen de noorderster ("AI bereidt voor, mens beslist").
+
+---
+
+*Onderzoek uitgevoerd door AI-onderzoeksagent, peildatum juni 2026. Alle claims zijn geverifieerd via directe GitHub-fetch of primaire bronnen. Sterren-aantallen zijn point-in-time en kunnen fluctueren. Werkwijze-referenties aangevuld 23-07-2026.*
