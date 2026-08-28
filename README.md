@@ -29,6 +29,19 @@ Het is **standalone bruikbaar** (orkestreert externe open-source tooling + zijn 
 **complementair** aan de rest — geen harde afhankelijkheid, wel rijkere instrumenten naarmate je meer
 Commons-tooling draait. Kort: *waar de andere projecten elk één taak uitvoeren, denkt cisochat eroverheen.*
 
+## Capability: beleidsondersteuning
+
+Het voormalige project `beleid-assistent` (AI-ondersteuning voor beleidsmedewerkers en juristen bij het
+opstellen van en toetsen aan beveiligingsbeleid, langs BIO2-controls) is op 28-08-2026 in cisochat opgegaan.
+Twee concepten met dezelfde stack en nul code naast elkaar houden kost meer dan het oplevert; binnen de
+vCISO-blueprint is beleidsondersteuning één van de capabilities onder de CSF-functie Govern.
+
+- [Concept beleidsondersteuning](docs/capabilities/beleidsassistent/concept.md): wat het is, voor wie, hoe het werkt
+- [Architectuur beleidsondersteuning](docs/capabilities/beleidsassistent/architectuur.md): de vijf agents en hun samenspel
+- [`data/bio2.json`](data/bio2.json): 148 BIO2-controls (v1.3) met ISO-maatregel en risico's, de gedeelde normenbron
+  voor deze capability en voor de normen-grounding van de dirigent
+- [`data/domeinen.json`](data/domeinen.json): beleidsdomeinen die BIO2-controls groeperen per beleidsdocument
+
 ## Meer lezen
 
 - [vCISO-blueprint](docs/vciso/vciso-blueprint.md) — **vastgesteld**: OSS-landschap per CSF-functie, capability-map, gap-analyse, orkestratie-ontwerp en roadmap
