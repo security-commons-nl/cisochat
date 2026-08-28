@@ -136,7 +136,7 @@ Elk later stuk doorloopt zijn eigen brainstorm-cyclus. We bouwen niet vóór de 
   - ✅ Generiek/open source — **geen** organisatie-specifieke of tenant-content in deze laag. De
     specialisatie naar een concrete organisatie gebeurt later, apart, binnen het eigen domein van die
     organisatie.
-  - ⚠️ **LIVIQ ⟷ Commons licentie-grens:** geen proprietary LIVIQ-IP in de open-source blueprint
+  - ⚠️ **Commercieel ⟷ commons licentie-grens:** geen proprietary IP van een commerciële partij in de open-source blueprint
     mengen. Open-core-keuzes bewust maken, niet sluipenderwijs.
 
 ## 9. Wat dit niet is
