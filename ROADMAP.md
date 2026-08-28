@@ -1,38 +1,24 @@
 # cisochat — Roadmap
 
-> AI-assistent die redeneert vanuit het perspectief van een CISO in de publieke sector.
+> **Status: concept** (redactiestatuut B8). Ontwerp en richting zijn uitgewerkt, er is nog geen
+> werkende code.
 
----
+De richting staat niet meer in dit bestand. De actuele uitwerking is de vCISO-blueprint:
 
-## Huidige staat
+- [docs/vciso/vciso-blueprint.md](docs/vciso/vciso-blueprint.md) — wat het moet worden en waarom
+- [docs/vciso/architectuur.html](docs/vciso/architectuur.html) — de architectuur, leesbaar
+- [docs/vciso/research/](docs/vciso/research/) — onderzoek per NIST CSF-functie, de grondslag onder de blueprint
 
-Concept-fase. Ontwerp en technische richting zijn uitgewerkt in [docs/concept.md](docs/concept.md). Nog geen werkende code.
+Een eerdere versie van deze roadmap beschreef een smalle chatbot (FastAPI, htmx, RAG op de
+kennisbank). Die is achterhaald door de blueprint, die cisochat positioneert als orkestratielaag
+over open-source security-tooling. Twee plannen naast elkaar houden kost meer dan het oplevert.
 
----
+## Eerstvolgende stap
 
-## Fase 1 — Werkende applicatie
-
-- [ ] Standalone FastAPI-applicatie (los van externe afhankelijkheden)
-- [ ] Docker Compose setup: api + frontend
-- [ ] Mistral EU als standaard LLM (`.env.example`)
-- [ ] Systeemprompt op basis van CISO-perspectief: BIO 2.0, ISO 27001, ISO 27701, ISO 22301, AVG
-- [ ] Eenvoudige chat-interface (HTML + htmx of vergelijkbaar)
-- [ ] README + installatie-documentatie
-
-## Fase 2 — Kennisbank-koppeling
-
-- [ ] RAG-pipeline op kennisbank-documenten (geanonimiseerde beleidsstukken, procedures)
-- [ ] Antwoorden verrijkt met verwijzingen naar bronnen in de kennisbank
-- [ ] Updatecyclus: nieuwe kennisbank-documenten automatisch geïndexeerd
-
-## Fase 3 — Gespreksgeheugen en UX
-
-- [ ] Streaming responses (Server-Sent Events)
-- [ ] Gespreksgeschiedenis per sessie
-- [ ] Exporteerbaar gespreksverslag (PDF/HTML)
-
----
+De org-contextkeuze uit de blueprint (hoe de assistent weet voor welke organisatie hij redeneert),
+en daarna een specificatie voor de Fase A-skeleton.
 
 ## Bijdragen
 
-Heb je ideeën of wil je bijdragen? Open een [issue](https://github.com/security-commons-nl/cisochat/issues) of zie [CONTRIBUTING.md](https://github.com/security-commons-nl/.github/blob/main/CONTRIBUTING.md).
+Open een [issue](https://github.com/security-commons-nl/cisochat/issues) of zie
+[CONTRIBUTING.md](https://github.com/security-commons-nl/.github/blob/main/CONTRIBUTING.md).
