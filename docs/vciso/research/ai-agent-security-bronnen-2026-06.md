@@ -50,10 +50,9 @@
 - **Relevantie cisochat:** direct bruikbaar toetskader voor de vCISO die agentic-AI-inzet beoordeelt;
   de 7 controls en het identiteits-spectrum zijn concrete checklist-items voor `govern.md`/`protect.md`.
 
-## 6. Elli Shlomo · "de AI-gateway is het doelwit, niet het model" (juli 2026)
-- **Auteur/bron:** Elli Shlomo (Head of Security Research, Guardz; Microsoft MVP). LinkedIn-post,
-  `linkedin.com/posts/elishlomo_security-cybersecurity-share-7485214715393191936-7jVm`. Geschreven vanuit
-  aanvallersperspectief. gevonden 10-08-2026.
+## 6. "De AI-gateway is het doelwit, niet het model" (juli 2026)
+- **Bron:** LinkedIn-post van een security-onderzoeker bij een MDR-leverancier (Guardz), geschreven vanuit
+  aanvallersperspectief.
 - **Essentie:** het model aanvallen is zonde van de tijd; het doelwit is de **AI-gateway**, want die bepaalt
   identiteit, tenant-context, retrieval-scope, prompt-assemblage en routing. De beschreven keten gebruikt
   geldige credentials en verstelt daarna de context die de gateway al vertrouwt: **tenant-context omhangen**
@@ -77,7 +76,34 @@
   stappen veronderstellen feitelijk een 0-day in de gateway, dus lees dit als ontwerp-checklist, niet als
   bewezen aanvalspad.
 
+## 7. OWASP AI Exchange · en EXIN AISP als certificering erop (augustus 2026)
+
+De initiatiefnemer van de OWASP AI Exchange kondigde aan dat **EXIN in september 2026 de certificering "AI
+Security Professional" (AISP)** lanceert, gebaseerd op de **OWASP AI Exchange**. Hij schreef het
+lesmateriaal op basis van drie jaar wereldwijde trainingen; AI Exchange-leden werkten met EXIN aan het
+examen.
+
+**Waarom dit hier staat, en niet alleen als opleidingsnieuws.** De AI Exchange is het onderliggende
+**framework**, en dat is het bruikbare deel: het is **vrij van copyright** en wordt ook met SANS gedeeld,
+dus er zit geen licentie-gate op hergebruik. Dat is voor deze kennisbank een wezenlijk verschil met
+kaders die je niet mag overnemen (vergelijk de licentie-afweging in `xorcism-hergebruik-afweging.md`).
+
+**Scope zoals gepositioneerd:** prompt injection · training data poisoning · model-exfiltratie ·
+AI-supply-chain-risico's · het aanvalsoppervlak van AI-systemen. Uitdrukkelijk **technisch** en verder
+gaand dan AI-governance, wat het complementair maakt aan de EU AI Act- en governance-lijn in deze
+blueprint.
+
+**Signaal om te volgen:** een van de betrokken auteurs draagt bij aan **prEN 18282**,
+een Europese AI-norm in ontwikkeling. Dat is relevant voor de normen-mapping: naast BIO2, NIS2 en de
+EU AI Act komt daar een Europese AI-norm bij die nu nog in de ontwerpfase zit.
+
+**Status:** dit is een aankondiging, geen beoordeeld curriculum. De AI Exchange zelf is te toetsen, de
+certificering nog niet. Bron: LinkedIn-post van een van de OWASP AI Exchange-initiatiefnemers.
+
 ## Rode draad
+*(Geldt voor bronnen 1 tot en met 6. Bron 7 is van andere aard: geen verdedigingsprincipe maar een
+vrij herbruikbaar framework plus de certificering die erop wordt gebouwd.)*
+
 Alle zes wijzen dezelfde kant op: context/input is onvertrouwd tot bewezen, agents werken op
 least-privilege en in een sandbox, en elke stap is auditeerbaar. Bron 6 scherpt dat laatste aan: auditeerbaar
 betekent niet "er is een logregel", maar dat het log de wérkelijke uitvoering vastlegt en niet de bedoelde.

@@ -244,7 +244,7 @@ met AI/LLM/agents. Ordeningsframe: NIST CSF 2.0 (Govern · Identify · Protect �
 | **AI-native koppeling** | ●●●○○ — MCP-interface aanwezig; AI-acties beperkt beschreven in beschikbare docs |
 | **Stack** | Python · Vue · TypeScript · Docker |
 | **Fit-score** | **3/5** — goede integratiehub voor open-source SOC-tooling; beta; MCP-laag is interessant als orkestratie-interface |
-| **Bronnen** | https://github.com/socfortress/CoPilot · https://socfortress.medium.com/ai-agent-for-your-open-source-siem-stack-is-here-wazuh-velociraptor-and-copilot-just-got-2e0542aac697 |
+| **Bronnen** | https://github.com/socfortress/CoPilot · Medium-artikel van SOCFortress over AI-agents voor de open-source SIEM-stack (Wazuh, Velociraptor, CoPilot) |
 | **CSF-dekking** | Detect en Respond (SOC-operaties) dominant; Identify via asset-context van Wazuh/Velociraptor |
 | **Aanpak** | Integratiehub + MCP tool-server; LLM-acties via MCP-interface |
 | **Herbruikbaarheid** | MCP-als-SIEM-interface-patroon: toont hoe je meerdere tools via één MCP-server samenvoegt voor de dirigent. |

@@ -288,7 +288,7 @@ posture-feeds die je via Grafana naar bestuurlijke views kunt tillen.
 
 ### Referentie — publieke KPI-catalogus & de operationeel-vs-bestuurlijk-valkuil
 
-Losse referentie (geen tool), gevonden 23-07-2026 · bron: Rajendra K. op LinkedIn,
+Losse referentie (geen tool), bron: LinkedIn-post,
 "Executive CISO Dashboard – Top 15 Cybersecurity KPIs". Bruikbaar als startcatalogus voor de
 rapportagelaag van de blueprint: Enterprise Cyber Risk Score · Critical Vulnerabilities · Patch
 Compliance · MTTD · MTTR · MTTRc (recover) · MFA Coverage · Privileged Account Protection · Zero Trust
@@ -308,8 +308,7 @@ OSS executive-board-view) en op de risk-based-reporting-lijn.
 
 ### Referentie — van dashboard naar besluit: het storytelling-raamwerk
 
-Losse referentie (geen tool), gevonden 10-08-2026 · bron: Matthijs van der Wel-ter Weel
-(MBA CISSP CISA GCTI, Commanding Dutch Cyber Reserves), LinkedIn Pulse 29-06-2026, "Cybersecurity
+Losse referentie (geen tool), bron: LinkedIn-artikel van een Nederlandse CISO/reservist, 29-06-2026, "Cybersecurity
 storytelling: waarom je beste dashboard de bestuurskamer niet overleeft". Nederlandstalig, ~1.400 woorden.
 
 **Waarom dit hier staat.** De KPI-referentie hierboven eindigt met "vertaal operationele telemetrie naar
@@ -358,8 +357,7 @@ in de publieke sector juist sterker: zie de Cbw-bestuurderstraining met persoonl
 
 ### Referentie — de security-visie op één pagina (5 toetsvragen)
 
-Losse referentie (geen tool), gevonden 10-08-2026 · bron: Geoff Hancock (CISO/CEO Advisor),
-LinkedIn-post juli 2026. Stelling: een security-visie past op één pagina; heb je veertig slides nodig, dan is
+Losse referentie (geen tool), bron: LinkedIn-post van een CISO-adviseur, juli 2026. Stelling: een security-visie past op één pagina; heb je veertig slides nodig, dan is
 het geen visie maar een catalogus.
 
 1. **Wat beschermen we hier?** (bijv. dienstverlening, vertrouwen van inwoners, continuïteit, gereguleerde data)

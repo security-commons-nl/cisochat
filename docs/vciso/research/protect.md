@@ -285,7 +285,7 @@
 | **9. AI-native koppelbaarheid** | Nee direct; policies kunnen AI-deployments op K8s bewaken (resource-limieten, image-signaturen). |
 | **10. Stack/taal** | Go |
 | **11. Fit-score** | **4/5** — Laagste drempel voor K8s policy-as-code (YAML vs Rego); actief; Apache-2.0. Aftrek: Kubernetes-only scope; minder generiek dan OPA. |
-| **12. Bronnen** | https://github.com/kyverno/kyverno · https://araji.medium.com/kubernetes-policy-as-code-kyverno-vs-opa-e44e0d613d8a |
+| **12. Bronnen** | https://github.com/kyverno/kyverno · Medium-artikel "Kubernetes policy as code: Kyverno vs OPA" |
 
 ---
 
