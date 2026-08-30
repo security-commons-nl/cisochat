@@ -21,7 +21,7 @@
     },
     {
       "id": "5.02.01",
-      "titel": "Rollen en verantwoordelijkheden bij \ninformatiebeveiligin",
+      "titel": "Rollen en verantwoordelijkheden bij \ninformatiebeveiliging",
       "iso_maatregel": "Rollen en verantwoordelijkheden bijinformatiebeveiliging moeten worden gedefinieerd en toegewezen overeenkomstig de behoeften van de organisatie.",
       "risico": "Security tasks are not performed or are duplicated because roles and responsibilities are unclear.",
       "overheidsmaatregel": "De leiding van de organisatie heeft vastgelegd wat de verantwoordelijkheden en rollen zijn voor informatiebeveiliging (ook voor OT, BCM en privacybescherming) binnen haar organisatie. Hierbij is specifieke aandacht voor de verantwoordelijkheden en rollen voor het adequaat afhandelen van incidenten.\nLijnmanagers en proceseigenaren die verantwoordelijk zijn voor bedrijfsmiddelen zijn ook verantwoordelijk voor de behandeling van risico’s die op die bedrijfsmiddelen van toepassing zijn.",
@@ -29,7 +29,7 @@
     },
     {
       "id": "5.02.02",
-      "titel": "Rollen en verantwoordelijkheden bij \ninformatiebeveiligin",
+      "titel": "Rollen en verantwoordelijkheden bij \ninformatiebeveiliging",
       "iso_maatregel": "Rollen en verantwoordelijkheden bijinformatiebeveiliging moeten worden gedefinieerd en toegewezen overeenkomstig de behoeften van de organisatie.",
       "risico": "Security tasks are not performed or are duplicated because roles and responsibilities are unclear.",
       "overheidsmaatregel": "Er is een CISO aangesteld die bevoegd is om onafhankelijk en zelfstandig te adviseren en te rapporteren aan het bestuur en of het controlerend orgaan over informatiebeveiliging.",
