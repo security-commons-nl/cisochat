@@ -55,9 +55,11 @@ vCISO-blueprint is beleidsondersteuning één van de capabilities onder de CSF-f
 
 - [Concept beleidsondersteuning](docs/capabilities/beleidsassistent/concept.md): wat het is, voor wie, hoe het werkt
 - [Architectuur beleidsondersteuning](docs/capabilities/beleidsassistent/architectuur.md): de vijf agents en hun samenspel
-- [`data/bio2.json`](data/bio2.json): 148 BIO2-controls (v1.3) met ISO-maatregel en risico's, de gedeelde normenbron
+- [`data/bio2.json`](data/bio2.json): 148 BIO2-controls (v1.3). **Sinds 02-09-2026 is de repo
+  [`normen`](https://github.com/security-commons-nl/normen) de gedeelde normenbron**, zonder de ISO-tekst;
+  dit bestand blijft hier staan tot de laatste afnemer is omgezet en wordt niet meer bijgewerkt
   voor deze capability en voor de normen-grounding van de dirigent
-- [`data/domeinen.json`](data/domeinen.json): beleidsdomeinen die BIO2-controls groeperen per beleidsdocument
+- [`data/domeinen.json`](data/domeinen.json): beleidsdomeinen die BIO2-controls groeperen per beleidsdocument (ook overgenomen in `normen` als `bio2-domeinen.json`)
 
 ## Meer lezen
 - [vCISO-blueprint](docs/vciso/vciso-blueprint.md) - **vastgesteld**: OSS-landschap per CSF-functie, capability-map, gap-analyse, orkestratie-ontwerp en roadmap
