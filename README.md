@@ -1,5 +1,13 @@
 # cisochat
 
+> **Deze repo is gearchiveerd (03-09-2026).** Een vCISO-agent is per definitie een gehoste applicatie met
+> AI, en die hoort sinds het besluit *lichte commons* niet in de commons (redactiestatuut B14). Wat er van
+> leeft: de normbron `data/bio2.json` zit in [normen](https://github.com/security-commons-nl/normen); het idee
+> zelf staat als issue met het label *idee* in [.github](https://github.com/security-commons-nl/.github/issues);
+> het tooling-onderzoek per CSF-functie in `docs/vciso/research/` blijft hier leesbaar tot het in het
+> kennisbankitem *referenties-tooling* is geoogst. Verder niets veranderd; alles hieronder is de stand van
+> het ontwerp.
+
 Een dirigent die de CISO helpt bij beleidsvragen en de weg wijst naar de juiste bron.
 
 Status: concept. Ontwerp en documentatie; geen werkende code.
